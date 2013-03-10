@@ -41,7 +41,7 @@
 NSCFTYPE_VARS
 @end
 
-@interface NSString (NSCtring_CFBridge)
+@interface NSString (NSString_CFBridge)
 @end
 
 @interface NSMutableString (NSMutableString_CFBridge)
