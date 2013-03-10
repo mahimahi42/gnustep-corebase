@@ -62,7 +62,14 @@ static Class NSMutableArrayClass = NULL;
     NSMutableArrayClass = [NSMutableArray class];
     placeholderArray = (NSCFArray*) CFArrayCreate(kCFAllocatorDefault,
       NULL, 0, &kCFTypeArrayCallBacks);
+      
+    [self registerAtExit];
   }
+}
+
++ (void) atExit
+{
+  DESTROY(placeholderArray);
 }
 
 - (id) initWithObjects: (const id[])objects count: (NSUInteger)count
@@ -145,7 +152,7 @@ static Class NSMutableArrayClass = NULL;
   
   if (self == NSCFArrayClass || self == NSArrayClass || self == NSMutableArrayClass)
   {
-    return [placeholderArray retain];
+    return RETAIN(placeholderArray);
   }
   else
   {

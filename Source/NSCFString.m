@@ -73,7 +73,14 @@ static NSStringEncoding *nsencodings = NULL;
     NSMutableStringClass = [NSMutableString class];
     placeholderString = (NSCFString*) CFStringCreateWithBytes(kCFAllocatorDefault,
       NULL, 0, kCFStringEncodingUTF8, NO);
+      
+    [self registerAtExit];
   }
+}
+
++ (void) atExit
+{
+  DESTROY(placeholderString);
 }
 
 - (id) initWithBytes: (const void*) bytes
@@ -555,7 +562,7 @@ encodings = CFStringGetListOfAvailableEncodings();
   
   if (self == NSCFStringClass || self == NSStringClass || self == NSMutableStringClass)
   {
-    return [placeholderString retain];
+    return RETAIN(placeholderString);
   }
   else
   {
