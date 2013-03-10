@@ -33,6 +33,18 @@
 NSCFTYPE_VARS
 @end
 
+@interface NSArray (NSArray_CFBridge)
+@end
+
+@interface NSMutableArray (NSMutableArray_CFBridge)
+@end
+
+static NSCFArray* placeholderArray = NULL;
+static Class NSCFArrayClass = NULL;
+static Class NSArrayClass = NULL;
+static Class NSMutableArrayClass = NULL;
+
+
 @implementation NSCFArray
 + (void) load
 {
@@ -42,6 +54,25 @@ NSCFTYPE_VARS
 + (void) initialize
 {
   GSObjCAddClassBehavior (self, [NSCFType class]);
+  
+  if (self == [NSCFArray class])
+  {
+    NSCFArrayClass = [NSCFArray class];
+    NSArrayClass = [NSArray class];
+    NSMutableArrayClass = [NSMutableArray class];
+    placeholderArray = (NSCFArray*) CFArrayCreate(kCFAllocatorDefault,
+      NULL, 0, &kCFTypeArrayCallBacks);
+  }
+}
+
+- (id) initWithObjects: (const id[])objects count: (NSUInteger)count
+{
+  RELEASE(self);
+  
+  self = (NSCFArray*) CFArrayCreate(kCFAllocatorDefault, (const void**) &objects,
+    count, &kCFTypeArrayCallBacks);
+  
+  return self;
 }
 
 - (NSUInteger) count
@@ -73,5 +104,52 @@ NSCFTYPE_VARS
 {
   CFArrayRemoveValueAtIndex (self, (CFIndex)index);
 }
+
+// NSMutableArray
+
+- (id)initWithCapacity:(NSUInteger)numItems
+{
+  RELEASE(self);
+  
+  self = (NSCFArray*) CFArrayCreateMutable(kCFAllocatorDefault,
+    numItems, &kCFTypeArrayCallBacks);
+  
+  return self;
+}
+
 @end
 
+@implementation NSArray (NSArray_CFBridge)
++ (id) allocWithZone: (NSZone*)z
+{
+
+  if (NSCFArrayClass == NULL)
+    NSCFArrayClass = [NSCFArray class]; // force initialization
+    
+  if (self == NSCFArrayClass || self == NSArrayClass || self == NSMutableArrayClass)
+  {
+    return [placeholderArray retain];
+  }
+  else
+  {
+    return NSAllocateObject(self, 0, z);
+  }
+}
+@end
+
+@implementation NSMutableArray (NSMutableArray_CFBridge)
++ (id) allocWithZone: (NSZone*)z
+{
+  if (NSCFArrayClass == NULL)
+    NSCFArrayClass = [NSCFArray class]; // force initialization
+  
+  if (self == NSCFArrayClass || self == NSArrayClass || self == NSMutableArrayClass)
+  {
+    return [placeholderArray retain];
+  }
+  else
+  {
+    return NSAllocateObject(self, 0, z);
+  }
+}
+@end
