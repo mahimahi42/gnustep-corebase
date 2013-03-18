@@ -128,6 +128,8 @@ enum
   _kCFStringHasNullByte = (1<<4)
 };
 
+// TODO: dispatch to ObjC in all of these methods OR check its use
+
 CF_INLINE Boolean
 CFStringIsMutable (CFStringRef str)
 {
@@ -493,7 +495,7 @@ CFShow (CFTypeRef obj)
 void
 CFShowStr (CFStringRef s)
 {
-  fprintf (stderr, "Length %d\n", (int)s->_count);
+  fprintf (stderr, "Length %ld\n", CFStringGetLength(s));
   fprintf (stderr, "IsWide %d\n", CFStringIsUnicode(s));
   fprintf (stderr, "InlineContents %d\n", CFStringIsInline(s));
   fprintf (stderr, "Allocator %p\n", CFGetAllocator(s));
@@ -801,12 +803,19 @@ CFStringCreateExternalRepresentation (CFAllocatorRef alloc,
 const UniChar *
 CFStringGetCharactersPtr (CFStringRef str)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFStringTypeID, const UniChar*, str,
+    "cStringUsingEncoding:",
+	CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingUTF16));
+
   return CFStringIsUnicode(str) ? str->_contents : NULL;
 }
 
 const char *
 CFStringGetCStringPtr (CFStringRef str, CFStringEncoding enc)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFStringTypeID, const char*, str,
+	"cStringUsingEncoding:", CFStringConvertEncodingToNSStringEncoding(enc));
+
   return (!CFStringIsUnicode(str) && __CFStringEncodingIsSupersetOfASCII(enc))
     ? str->_contents : NULL;
 }
@@ -816,6 +825,27 @@ CFStringGetBytes (CFStringRef str, CFRange range, CFStringEncoding enc,
                   UInt8 lossByte, Boolean isExtRep, UInt8 *buffer,
                   CFIndex maxBufLen, CFIndex *usedBufLen)
 {
+  // FIXME: ranges not being checked!
+
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    // TODO: write a test to check this branch
+    Boolean b;
+    uintptr_t opts = 0;
+
+    if (lossByte != 0)
+      opts |= 1; /* NSStringEncodingConversionAllowLossy */
+    if (isExtRep != 0)
+      opts |= 2; /*NSStringEncodingConversionExternalRepresentation*/
+
+    CF_OBJC_CALLV(Boolean, b, str,
+      "getBytes:maxLength:usedLength:encoding:options:range:remainingRange:",
+      buffer, maxBufLen, usedBufLen, CFStringConvertEncodingToNSStringEncoding(enc),
+      opts, range, NULL);
+
+    return b ? *usedBufLen : 0;
+  }
+
   CFIndex converted;
   const UniChar *characters;
   
@@ -848,10 +878,12 @@ CFStringGetBytes (CFStringRef str, CFRange range, CFStringEncoding enc,
           
           UniChar *dst;
           
+		  // TODO: write a test for this branch,
+		  // untested code fixes have been made
           dst = (UniChar *)buffer;
           if (isExtRep && enc == kCFStringEncodingUTF16)
-            dst = 0xFEFF;
-          range.length = GS_MIN (range.length, maxBufLen / sizeof(UniChar));
+            *dst++ = 0xFEFF;
+          converted = range.length = GS_MIN (range.length, maxBufLen / sizeof(UniChar));
           CFStringGetCharacters (str, range, (UniChar*)buffer);
           if (enc == UTF16_ENCODING_TO_SWAP)
             {
@@ -978,6 +1010,9 @@ CFRange
 CFStringGetRangeOfComposedCharactersAtIndex (CFStringRef str,
   CFIndex theIndex)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFStringTypeID, CFRange, str,
+    "rangeOfComposedCharacterSequenceAtIndex:", theIndex);
+
   if (CFStringIsUnicode(str))
     {
       CFIndex len = 1;
@@ -1201,6 +1236,20 @@ void
 CFStringAppendCharacters (CFMutableStringRef str,
   const UniChar *chars, CFIndex numChars)
 {
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    // TODO: add a test for this branch
+    CFStringRef wrapped;
+
+	wrapped = CFStringCreateWithCharactersNoCopy(NULL, chars, numChars,
+      kCFAllocatorNull);
+
+	CF_OBJC_VOIDCALLV(str, "appendString:", wrapped);
+
+	CFRelease(wrapped);
+	return;
+  }
+
   CFIndex length;
   void *contents;
   
@@ -1222,6 +1271,20 @@ void
 CFStringAppendCString (CFMutableStringRef str, const char *cStr,
   CFStringEncoding encoding)
 {
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    // TODO: add a test for this branch
+    CFStringRef wrapped;
+
+    wrapped = CFStringCreateWithCStringNoCopy(NULL, cStr, encoding,
+      kCFAllocatorNull);
+
+    CF_OBJC_VOIDCALLV(str, "appendString:", wrapped);
+
+    CFRelease(wrapped);
+    return;
+  }
+
   UniChar uBuffer[BUFFER_SIZE];
   CFIndex cStrLen;
   CFIndex numChars;
@@ -1271,6 +1334,21 @@ void
 CFStringPad (CFMutableStringRef str, CFStringRef padString,
   CFIndex length, CFIndex indexIntoPad)
 {
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    // TODO: add a test for this branch
+    CFStringRef padded;
+
+    CF_OBJC_CALLV(CFStringRef, padded, str,
+      "stringByPaddingToLength:withString:startingAtIndex:",
+      length, padString, indexIntoPad);
+
+	CF_OBJC_VOIDCALLV(str, "setString:", padded);
+	CFRelease(padded);
+
+	return;
+  }
+
   if (padString == NULL && length < CFStringGetLength(str)) /* truncating */
     {
       ((UniChar*)str->_contents)[length] = 0x0000;
@@ -1318,6 +1396,10 @@ void
 CFStringReplace (CFMutableStringRef str, CFRange range,
   CFStringRef replacement)
 {
+  CF_OBJC_FUNCDISPATCH2(_kCFStringTypeID, void, str,
+    "replaceCharactersInRange:withString:", range,
+    replacement);
+
   CFStringInlineBuffer buffer;
   CFIndex textLength;
   CFIndex repLength;
@@ -1371,6 +1453,9 @@ CFStringReplace (CFMutableStringRef str, CFRange range,
 void
 CFStringReplaceAll (CFMutableStringRef theString, CFStringRef replacement)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFStringTypeID, void, theString, "setString:",
+    replacement);
+
   CFStringInlineBuffer buffer;
   CFIndex textLength;
   CFIndex idx;
@@ -1408,6 +1493,8 @@ CFStringTrim (CFMutableStringRef str, CFStringRef trimString)
 void
 CFStringTrimWhitespace (CFMutableStringRef str)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFStringTypeID, void, str, "_cfTrimWhitespace");
+
   CFStringInlineBuffer buffer;
   CFIndex start;
   CFIndex end;
@@ -1511,25 +1598,66 @@ CFStringCaseMap (CFMutableStringRef str, CFLocaleRef locale,
 void
 CFStringCapitalize (CFMutableStringRef str, CFLocaleRef locale)
 {
-  CFStringCaseMap (str, locale, 0, _kCFStringCapitalize);
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    CFStringRef mod;
+    CF_OBJC_CALLV(CFStringRef, mod, str, "capitalizedString");
+	CF_OBJC_VOIDCALLV(str, "setString:", mod);
+
+	CFRelease(mod);
+  }
+  else
+    CFStringCaseMap (str, locale, 0, _kCFStringCapitalize);
 }
 
 void
 CFStringLowercase (CFMutableStringRef str, CFLocaleRef locale)
 {
-  CFStringCaseMap (str, locale, 0, _kCFStringLowercase);
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    CFStringRef mod;
+    CF_OBJC_CALLV(CFStringRef, mod, str, "lowercaseString");
+	CF_OBJC_VOIDCALLV(str, "setString:", mod);
+
+	CFRelease(mod);
+  }
+  else
+    CFStringCaseMap (str, locale, 0, _kCFStringLowercase);
 }
 
 void
 CFStringUppercase (CFMutableStringRef str, CFLocaleRef locale)
 {
-  CFStringCaseMap (str, locale, 0, _kCFStringUppercase);
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    CFStringRef mod;
+    CF_OBJC_CALLV(CFStringRef, mod, str, "uppercaseString");
+	CF_OBJC_VOIDCALLV(str, "setString:", mod);
+
+	CFRelease(mod);
+  }
+  else
+    CFStringCaseMap (str, locale, 0, _kCFStringUppercase);
 }
 
 void
 CFStringFold (CFMutableStringRef str, CFOptionFlags flags, CFLocaleRef locale)
 {
-  CFStringCaseMap (str, locale, flags, _kCFStringFold);
+  if (CF_IS_OBJC(_kCFStringTypeID, str))
+  {
+    /* CFOptionFlags have the same insensitivity values
+     * as NSStringCompareOptions.
+     * CFLocaleRef is toll-free bridged*/
+	
+	CFStringRef mod;
+    CF_OBJC_CALLV(CFStringRef, mod, str, "stringByFoldingWithOptions:locale:",
+      flags, locale);
+
+    CF_OBJC_VOIDCALLV(str, "setString:", mod);
+    CFRelease(mod);
+  }
+  else
+    CFStringCaseMap (str, locale, flags, _kCFStringFold);
 }
 
 CF_INLINE UNormalizationMode
@@ -1554,6 +1682,8 @@ void
 CFStringNormalize (CFMutableStringRef str,
   CFStringNormalizationForm theForm)
 {
+  // TODO: dispatch to ObjC
+
   /* FIXME: The unorm API has been officially deprecated on ICU 4.8, however,
      the new unorm2 API was only introduced on ICU 4.4.  The current plan is
      to provide compatibility down to ICU 4.0, so unorm is used here.  In
@@ -1597,6 +1727,8 @@ Boolean
 CFStringTransform (CFMutableStringRef str, CFRange *range,
   CFStringRef transform, Boolean reverse)
 {
+  // TODO: dispatch to ObjC
+
 #define UTRANS_LENGTH 128
   struct __CFMutableString *mStr;
   UniChar transID[UTRANS_LENGTH];

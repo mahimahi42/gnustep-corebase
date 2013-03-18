@@ -30,6 +30,7 @@
 #import <Foundation/NSData.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSLocale.h>
+#import <Foundation/NSCharacterSet.h>
 
 #include "NSCFType.h"
 #include "CoreFoundation/CFString.h"
@@ -41,16 +42,13 @@
 NSCFTYPE_VARS
 @end
 
-@interface NSString (NSString_CFBridge)
+@interface NSString (CoreBaseAdditions)
+- (CFTypeID) _cfTypeID;
 @end
 
-@interface NSMutableString (NSMutableString_CFBridge)
+@interface NSMutableString (CoreBaseAdditions)
+- (void) _cfTrimWhitespace;
 @end
-
-static NSCFString* placeholderString = NULL;
-static Class NSCFStringClass = NULL;
-static Class NSStringClass = NULL;
-static Class NSMutableStringClass = NULL;
 
 @implementation NSCFString
 
@@ -65,22 +63,6 @@ static NSStringEncoding *nsencodings = NULL;
 + (void) initialize
 {
   GSObjCAddClassBehavior (self, [NSCFType class]);
-  
-  if (self == [NSCFString class])
-  {
-    NSCFStringClass = [NSCFString class];
-    NSStringClass = [NSString class];
-    NSMutableStringClass = [NSMutableString class];
-    placeholderString = (NSCFString*) CFStringCreateWithBytes(kCFAllocatorDefault,
-      NULL, 0, kCFStringEncodingUTF8, NO);
-      
-    [self registerAtExit];
-  }
-}
-
-+ (void) atExit
-{
-  DESTROY(placeholderString);
 }
 
 - (id) initWithBytes: (const void*) bytes
@@ -149,6 +131,7 @@ static NSStringEncoding *nsencodings = NULL;
   return self;
 }
 
+/*
 - (id) initWithFormat: (NSString*) format
             arguments: (va_list) argList
 {
@@ -174,6 +157,7 @@ static NSStringEncoding *nsencodings = NULL;
     CFStringCreateWithFormatAndArguments (CFAllocatorGetDefault(),
     (CFDictionaryRef)locale, format, argList);
 }
+*/
 
 - (id) initWithData: (NSData*)data
            encoding: (NSStringEncoding)encoding
@@ -536,38 +520,25 @@ encodings = CFStringGetListOfAvailableEncodings();
 
 @end
 
-@implementation NSString (NSMutableString_CFBridge)
-+ (id) allocWithZone: (NSZone*)z
+@implementation NSString (CoreBaseAdditions)
+- (CFTypeID) _cfTypeID
 {
-
-  if (NSCFStringClass == NULL)
-    NSCFStringClass = [NSCFString class]; // force initialization
-    
-  if (self == NSCFStringClass || self == NSStringClass || self == NSMutableStringClass)
-  {
-    return [placeholderString retain];
-  }
-  else
-  {
-    return NSAllocateObject(self, 0, z);
-  }
+  return CFStringGetTypeID();
 }
 @end
 
-@implementation NSMutableString (NSMutableString_CFBridge)
-+ (id) allocWithZone: (NSZone*)z
+@implementation NSMutableString (CoreBaseAdditions)
+- (void) _cfTrimWhitespace
 {
-  if (NSCFStringClass == NULL)
-    NSCFStringClass = [NSCFString class]; // force initialization
-  
-  if (self == NSCFStringClass || self == NSStringClass || self == NSMutableStringClass)
-  {
-    return RETAIN(placeholderString);
-  }
-  else
-  {
-    return NSAllocateObject(self, 0, z);
-  }
+  NSString* trimmed;
+
+  trimmed = [self stringByTrimmingCharactersInSet:
+                  [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+  [self setString: trimmed];
+  [trimmed release];
 }
+
 @end
+
 

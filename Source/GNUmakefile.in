@@ -91,7 +91,8 @@ libgnustep-corebase_OBJC_FILES = \
   NSCFData.m \
   NSCFError.m \
   NSCFString.m \
-  NSCFType.m
+  NSCFType.m \
+  NSCFNumber.m
 
 libgnustep-corebase_LIBRARIES_DEPEND_UPON += @LIBS@
 libgnustep-corebase_HEADER_FILES_DIR = ../Headers/CoreFoundation

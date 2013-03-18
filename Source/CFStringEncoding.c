@@ -1122,7 +1122,7 @@ GSStringEncodingFromUnicode (CFStringEncoding enc, UInt8 *d, CFIndex dlen,
       dst = (UniChar *)d;
       if (isExtRep && enc == kCFStringEncodingUTF16 && dlen >= 2)
         {
-          
+           // TODO
         }
     }
   else if (enc == kCFStringEncodingUTF32
@@ -1229,7 +1229,7 @@ GSStringEncodingToUnicode (CFStringEncoding enc, UniChar *d, CFIndex dlen,
            || enc == kCFStringEncodingUTF16BE
            || enc == kCFStringEncodingUTF16LE)
     {
-      
+       // TODO
     }
   else if (enc == kCFStringEncodingUTF32
            || enc == kCFStringEncodingUTF32BE
