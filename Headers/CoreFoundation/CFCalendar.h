@@ -54,6 +54,11 @@ typedef enum
 #if MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED
   kCFCalendarUnitQuarter = (1UL << 11),
 #endif
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED
+  kCFCalendarUnitWeekOfMonth = (1UL << 12),
+  kCFCalendarUnitWeekOfYear = (1UL << 13),
+  kCFCalendarUnitYearForWeekOfYear = (1UL << 14),
+#endif
 } CFCalendarUnit;
 
 enum

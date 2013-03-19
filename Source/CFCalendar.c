@@ -34,6 +34,7 @@
 #include "GSPrivate.h"
 
 #include <unicode/ucal.h>
+#include <string.h>
 
 struct __CFCalendar
 {
@@ -172,6 +173,7 @@ CFCalendarUnitToUCalendarDateFields (CFCalendarUnit unit)
         ret = UCAL_SECOND;
         break;
       case kCFCalendarUnitWeek:
+      case kCFCalendarUnitWeekOfYear:
         ret = UCAL_WEEK_OF_YEAR;
         break;
       case kCFCalendarUnitWeekday:
@@ -219,6 +221,25 @@ CFCalendarGetCalendarUnitFromDescription (const char **description,
       case 's':
         *unit = kCFCalendarUnitSecond;
         break;
+      /* The following types are undocumented, but supported by original CF */
+      case 'G':
+        *unit = kCFCalendarUnitEra;
+        break;
+      case 'w':
+        *unit = kCFCalendarUnitWeekOfYear;
+        break;
+      case 'W':
+        *unit = kCFCalendarUnitWeekOfMonth;
+        break;
+      case 'Y':
+        *unit = kCFCalendarUnitYearForWeekOfYear;
+        break;
+      case 'E':
+        *unit = kCFCalendarUnitWeekday;
+        break;
+      case 'F':
+        *unit = kCFCalendarUnitWeekdayOrdinal;
+        break;
     }
   
   *description = current;
@@ -226,6 +247,76 @@ CFCalendarGetCalendarUnitFromDescription (const char **description,
   return true;
 }
 
+/* This function returns true is there is still characters to be consumed. */
+CF_INLINE Boolean
+CFCalendarGetCalendarICUUnitFromDescription (const char **description,
+  UCalendarDateFields *unit)
+{
+  const char *current = *description;
+  
+  if (current == NULL || *current == '\0')
+    return false;
+  
+  switch (*current++)
+    {
+      case 'y':
+        *unit = UCAL_YEAR;
+        break;
+      case 'M':
+        *unit = UCAL_MONTH;
+        break;
+      case 'd':
+        *unit = UCAL_DAY_OF_MONTH;
+        break;
+      case 'H':
+        *unit = UCAL_HOUR_OF_DAY;
+        break;
+      case 'm':
+        *unit = UCAL_MINUTE;
+        break;
+      case 's':
+        *unit = UCAL_SECOND;
+        break;
+      /* The following types are undocumented, but supported by original CF */
+      case 'G':
+        *unit = UCAL_ERA;
+        break;
+      case 'w':
+        *unit = UCAL_WEEK_OF_YEAR;
+        break;
+      case 'W':
+        *unit = UCAL_WEEK_OF_MONTH;
+        break;
+      case 'Y':
+        *unit = UCAL_YEAR_WOY;
+        break;
+      case 'E':
+        *unit = UCAL_DAY_OF_WEEK;
+        break;
+      case 'F':
+        *unit = UCAL_DAY_OF_WEEK_IN_MONTH;
+        break;
+      case 'S':
+        *unit = UCAL_MILLISECOND;
+        break;
+      case 'h':
+        *unit = UCAL_HOUR;
+        break;
+      case 'a':
+        *unit = UCAL_AM_PM;
+        break;
+      case 'g':
+        *unit = UCAL_JULIAN_DAY;
+        break;
+	  default:
+        *unit = -1;
+        break;
+    }
+  
+  *description = current;
+  
+  return true;
+}
 
 
 CFTypeID
@@ -323,12 +414,15 @@ CFCalendarCreateWithIdentifier (CFAllocatorRef allocator, CFStringRef ident)
 CFTimeZoneRef
 CFCalendarCopyTimeZone (CFCalendarRef cal)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFCalendarTypeID, CFTimeZoneRef, cal, "timeZone");
   return CFTimeZoneCreateWithName (CFGetAllocator(cal), cal->_tzIdent, true);
 }
 
 void
 CFCalendarSetTimeZone (CFCalendarRef cal, CFTimeZoneRef tz)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFCalendarTypeID, void, cal, "setTimeZone:", tz);
+
   CFStringRef tzIdent;
   
   tzIdent = CFTimeZoneGetName(tz);
@@ -352,6 +446,9 @@ CFCalendarSetTimeZone (CFCalendarRef cal, CFTimeZoneRef tz)
 CFStringRef
 CFCalendarGetIdentifier (CFCalendarRef cal)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFCalendarTypeID, CFStringRef, cal,
+    "calendarIdentifier");
+
   return cal->_ident;
 }
 
@@ -399,12 +496,10 @@ CFCalendarSetMinimumDaysInFirstWeek (CFCalendarRef cal, CFIndex mwd)
 }
 
 Boolean
-CFCalendarAddComponents (CFCalendarRef cal, CFAbsoluteTime *at,
-  CFOptionFlags options, const char *componentDesc, ...)
+__CFCalendarAddComponentsV (CFCalendarRef cal, CFAbsoluteTime *at,
+  CFOptionFlags options, const char *componentDesc, int* buffer)
 {
-  va_list arg;
-  int value;
-  CFCalendarUnit unit = 0;
+  int value, index = 0;
   UCalendarDateFields field;
   UErrorCode err = U_ZERO_ERROR;
   
@@ -414,45 +509,20 @@ CFCalendarAddComponents (CFCalendarRef cal, CFAbsoluteTime *at,
   if (U_FAILURE(err))
     return false;
   
-  va_start (arg, componentDesc);
-  while (CFCalendarGetCalendarUnitFromDescription(&componentDesc, &unit))
+  while (CFCalendarGetCalendarICUUnitFromDescription(&componentDesc, &field))
     {
-      switch (unit)
+      value = buffer[index++];
+      
+      if (field == UCAL_MONTH)
+        value--;
+      else if (field != -1)
         {
-          case kCFCalendarUnitYear:
-            field = UCAL_YEAR;
-            value = va_arg (arg, int);
-            break;
-          case kCFCalendarUnitMonth:
-            field = UCAL_MONTH;
-            value = va_arg (arg, int);
-            break;
-          case kCFCalendarUnitDay:
-            field = UCAL_DAY_OF_MONTH;
-            value = va_arg (arg, int);
-            break;
-          case kCFCalendarUnitHour:
-            field = UCAL_HOUR_OF_DAY;
-            value = va_arg (arg, int);
-            break;
-          case kCFCalendarUnitMinute:
-            field = UCAL_MINUTE;
-            value = va_arg (arg, int);
-            break;
-          case kCFCalendarUnitSecond:
-            field = UCAL_SECOND;
-            value = va_arg (arg, int) - 1;
-            break;
-          default:
-            va_arg (arg, int); /* Skip */
-            continue;
+          if (options & kCFCalendarComponentsWrap)
+            ucal_roll (cal->_ucal, field, value, &err);
+          else
+            ucal_add (cal->_ucal, field, value, &err);
         }
-      if (options & kCFCalendarComponentsWrap)
-        ucal_roll (cal->_ucal, field, value, &err);
-      else
-        ucal_add (cal->_ucal, field, value, &err);
     }
-  va_end(arg);
   
   *at = UDATE_TO_ABSOLUTETIME(ucal_getMillis (cal->_ucal, &err));
   
@@ -463,55 +533,115 @@ CFCalendarAddComponents (CFCalendarRef cal, CFAbsoluteTime *at,
 }
 
 Boolean
-CFCalendarComposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime *at,
-  const char *componentDesc, ...)
+CFCalendarAddComponents (CFCalendarRef cal, CFAbsoluteTime *at,
+  CFOptionFlags options, const char *componentDesc, ...)
 {
-  va_list arg;
+  // FIXME: dispatch to ObjC
+  const int count = strlen(componentDesc);
+  int i;
+  int *buffer;
+  va_list args;
+  Boolean retval;
+  
+  buffer = (int*) CFAllocatorAllocate(kCFAllocatorDefault,
+    sizeof(int)*count, 0);
+
+  va_start(args, componentDesc);
+
+  for (i = 0; i < count; i++)
+    buffer[i] = va_arg(args, int);
+
+  va_end(args);
+
+  retval = __CFCalendarAddComponentsV(cal, at, options, componentDesc, buffer);
+
+  CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
+  return retval;
+}
+
+
+Boolean
+__CFCalendarComposeAbsoluteTimeV (CFCalendarRef cal, CFAbsoluteTime *at,
+  const char *componentDesc, int* buffer)
+{
   int value;
   UCalendarDateFields field;
-  CFCalendarUnit unit = 0;
+  UErrorCode err = U_ZERO_ERROR;
+  int index = 0;
+  
+  CFCalendarOpenUCalendar(cal);
+
+  while (CFCalendarGetCalendarICUUnitFromDescription(&componentDesc, &field))
+    {
+      value = buffer[index];
+      
+      if (field == UCAL_MONTH)
+        value--;
+	  if (field != -1)
+        ucal_set (cal->_ucal, field, value);
+	  index++;
+    }
+  
+  *at = UDATE_TO_ABSOLUTETIME(ucal_getMillis (cal->_ucal, &err));
+  if (U_FAILURE(err))
+    return false;
+  
+  return true;
+}
+
+Boolean
+CFCalendarComposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime* at,
+  const char *componentDesc, ...)
+{
+  // FIXME: dispatch to ObjC
+  const int count = strlen(componentDesc);
+  int i;
+  int *buffer;
+  va_list args;
+  Boolean retval;
+  
+  buffer = (int*) CFAllocatorAllocate(kCFAllocatorDefault,
+    sizeof(int)*count, 0);
+
+  va_start(args, componentDesc);
+
+  for (i = 0; i < count; i++)
+    buffer[i] = va_arg(args, int);
+
+  va_end(args);
+
+  retval = __CFCalendarComposeAbsoluteTimeV(cal, at, componentDesc, buffer);
+
+  CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
+  return retval;
+}
+
+Boolean
+__CFCalendarDecomposeAbsoluteTimeV (CFCalendarRef cal, CFAbsoluteTime at,
+  const char *componentDesc, int** buffer)
+{
+  int *value;
+  int index = 0;
+  UCalendarDateFields field;
   UErrorCode err = U_ZERO_ERROR;
   
   CFCalendarOpenUCalendar(cal);
   
-  va_start (arg, componentDesc);
-  while (CFCalendarGetCalendarUnitFromDescription(&componentDesc, &unit))
-    {
-      switch (unit)
-        {
-          case kCFCalendarUnitYear:
-            value = va_arg (arg, int);
-            field = UCAL_YEAR;
-            break;
-          case kCFCalendarUnitMonth:
-            value = va_arg (arg, int) - 1;
-            field = UCAL_MONTH;
-            break;
-          case kCFCalendarUnitDay:
-            value = va_arg (arg, int);
-            field = UCAL_DATE;
-            break;
-          case kCFCalendarUnitHour:
-            value = va_arg (arg, int);
-            field = UCAL_HOUR_OF_DAY;
-            break;
-          case kCFCalendarUnitMinute:
-            value = va_arg (arg, int);
-            field = UCAL_MINUTE;
-            break;
-          case kCFCalendarUnitSecond:
-            value = va_arg (arg, int);
-            field = UCAL_SECOND;
-            break;
-          default:
-            va_arg (arg, int); /* Skip */
-            continue;
-        }
-      ucal_set (cal->_ucal, field, value);
-    }
-  va_end(arg);
+  ucal_setMillis (cal->_ucal, ABSOLUTETIME_TO_UDATE(at), &err);
+  if (U_FAILURE(err))
+    return false;
   
-  *at = UDATE_TO_ABSOLUTETIME(ucal_getMillis (cal->_ucal, &err));
+  while (CFCalendarGetCalendarICUUnitFromDescription(&componentDesc, &field))
+    {
+      value = buffer[index++];
+      if (field != -1)
+        {
+          *value = ucal_get (cal->_ucal, field, &err);
+          if (field == UCAL_MONTH)
+            *value += 1;
+        }
+    }
+  
   if (U_FAILURE(err))
     return false;
   
@@ -522,64 +652,27 @@ Boolean
 CFCalendarDecomposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime at,
   const char *componentDesc, ...)
 {
-  va_list arg;
-  int *value;
-  CFCalendarUnit unit = 0;
-  UCalendarDateFields field;
-  UErrorCode err = U_ZERO_ERROR;
+  // FIXME: dispatch to ObjC
+  const int count = strlen(componentDesc);
+  int i;
+  int **buffer;
+  va_list args;
+  Boolean retval;
   
-  CFCalendarOpenUCalendar(cal);
-  
-  ucal_setMillis (cal->_ucal, ABSOLUTETIME_TO_UDATE(at), &err);
-  if (U_FAILURE(err))
-    return false;
-  
-  va_start (arg, componentDesc);
-  while (CFCalendarGetCalendarUnitFromDescription(&componentDesc, &unit))
-    {
-      value = NULL;
-      switch (unit)
-        {
-          case kCFCalendarUnitYear:
-            field = UCAL_YEAR;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitMonth:
-            field = UCAL_MONTH;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitDay:
-            field = UCAL_DAY_OF_MONTH;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitHour:
-            field = UCAL_HOUR_OF_DAY;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitMinute:
-            field = UCAL_MINUTE;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitSecond:
-            field = UCAL_SECOND;
-            value = va_arg (arg, int*);
-            break;
-          default:
-            va_arg (arg, int*); /* Skip */
-        }
-      if (value)
-        {
-          *value = ucal_get (cal->_ucal, field, &err);
-          if (unit == kCFCalendarUnitMonth)
-            *value += 1;
-        }
-    }
-  va_end(arg);
-  
-  if (U_FAILURE(err))
-    return false;
-  
-  return true;
+  buffer = (int**) CFAllocatorAllocate(kCFAllocatorDefault,
+    sizeof(int*)*count, 0);
+
+  va_start(args, componentDesc);
+
+  for (i = 0; i < count; i++)
+    buffer[i] = va_arg(args, int*);
+
+  va_end(args);
+
+  retval = __CFCalendarDecomposeAbsoluteTimeV(cal, at, componentDesc, buffer);
+
+  CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
+  return retval;
 }
 
 Boolean
@@ -592,7 +685,6 @@ CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
   va_list arg;
   int *value;
   int32_t mult;
-  CFCalendarUnit unit = 0;
   UDate start;
   UDate end;
   UCalendarDateFields field;
@@ -620,43 +712,15 @@ CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
     return false;
   
   va_start (arg, componentDesc);
-  while (CFCalendarGetCalendarUnitFromDescription(&componentDesc, &unit))
+  while (CFCalendarGetCalendarICUUnitFromDescription(&componentDesc, &field))
     {
       int32_t min = 0;
       int32_t max = 1;
       double millis;
       
-      value = NULL;
-      switch (unit)
-        {
-          case kCFCalendarUnitYear:
-            field = UCAL_YEAR;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitMonth:
-            field = UCAL_MONTH;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitDay:
-            field = UCAL_DAY_OF_MONTH;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitHour:
-            field = UCAL_HOUR_OF_DAY;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitMinute:
-            field = UCAL_MINUTE;
-            value = va_arg (arg, int*);
-            break;
-          case kCFCalendarUnitSecond:
-            field = UCAL_SECOND;
-            value = va_arg (arg, int*);
-            break;
-          default:
-            va_arg (arg, int*); /* Skip */
-            continue;
-        }
+      value = va_arg (arg, int*);
+	  if (field == -1)
+        value = NULL;
       
       /* Get a range */
       do
