@@ -109,9 +109,11 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 	IFFLAG(NSWeekCalendarUnit, 'w');
 	IFFLAG(NSWeekdayCalendarUnit, 'E');
 	IFFLAG(NSWeekdayOrdinalCalendarUnit, 'F');
+#if 0 // requires a patched Base
 	IFFLAG(NSWeekOfMonthCalendarUnit, 'W');
 	IFFLAG(NSWeekOfYearCalendarUnit, 'w');
 	IFFLAG(NSYearForWeekOfYearCalendarUnit, 'Y');
+#endif
 
 #undef IFFLAG
 
