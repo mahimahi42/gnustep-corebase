@@ -33,17 +33,9 @@
 NSCFTYPE_VARS
 @end
 
-@interface NSArray (NSArray_CFBridge)
+@interface NSArray (CoreBaseAdditions)
+- (CFTypeID) _cfTypeID;
 @end
-
-@interface NSMutableArray (NSMutableArray_CFBridge)
-@end
-
-static NSCFArray* placeholderArray = NULL;
-static Class NSCFArrayClass = NULL;
-static Class NSArrayClass = NULL;
-static Class NSMutableArrayClass = NULL;
-
 
 @implementation NSCFArray
 + (void) load
@@ -54,22 +46,6 @@ static Class NSMutableArrayClass = NULL;
 + (void) initialize
 {
   GSObjCAddClassBehavior (self, [NSCFType class]);
-  
-  if (self == [NSCFArray class])
-  {
-    NSCFArrayClass = [NSCFArray class];
-    NSArrayClass = [NSArray class];
-    NSMutableArrayClass = [NSMutableArray class];
-    placeholderArray = (NSCFArray*) CFArrayCreate(kCFAllocatorDefault,
-      NULL, 0, &kCFTypeArrayCallBacks);
-      
-    [self registerAtExit];
-  }
-}
-
-+ (void) atExit
-{
-  DESTROY(placeholderArray);
 }
 
 - (id) initWithObjects: (const id[])objects count: (NSUInteger)count
@@ -127,36 +103,9 @@ static Class NSMutableArrayClass = NULL;
 @end
 
 @implementation NSArray (NSArray_CFBridge)
-+ (id) allocWithZone: (NSZone*)z
+- (CFTypeID) _cfTypeID
 {
-
-  if (NSCFArrayClass == NULL)
-    NSCFArrayClass = [NSCFArray class]; // force initialization
-    
-  if (self == NSCFArrayClass || self == NSArrayClass || self == NSMutableArrayClass)
-  {
-    return [placeholderArray retain];
-  }
-  else
-  {
-    return NSAllocateObject(self, 0, z);
-  }
+  return CFArrayGetTypeID();
 }
 @end
 
-@implementation NSMutableArray (NSMutableArray_CFBridge)
-+ (id) allocWithZone: (NSZone*)z
-{
-  if (NSCFArrayClass == NULL)
-    NSCFArrayClass = [NSCFArray class]; // force initialization
-  
-  if (self == NSCFArrayClass || self == NSArrayClass || self == NSMutableArrayClass)
-  {
-    return RETAIN(placeholderArray);
-  }
-  else
-  {
-    return NSAllocateObject(self, 0, z);
-  }
-}
-@end

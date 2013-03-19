@@ -317,6 +317,8 @@ CFIndex
 CFArrayGetFirstIndexOfValue (CFArrayRef array, CFRange range,
                              const void *value)
 {
+  // FIXME: missing dispatch to ObjC
+
   const void **contents;
   CFIndex idx;
   CFIndex end;
@@ -352,6 +354,8 @@ CFIndex
 CFArrayGetLastIndexOfValue (CFArrayRef array, CFRange range,
                             const void *value)
 {
+  // FIXME: missing dispatch to ObjC
+
   const void **contents;
   CFIndex idx;
   CFIndex start;
@@ -568,6 +572,8 @@ void
 CFArrayReplaceValues (CFMutableArrayRef array, CFRange range,
                       const void **newValues, CFIndex newCount)
 {
+  // FIXME: missing dispatch to ObjC - replaceObjectsInRange
+
   const void **start;
   const void **end;
   CFAllocatorRef alloc;
