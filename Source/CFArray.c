@@ -317,7 +317,8 @@ CFIndex
 CFArrayGetFirstIndexOfValue (CFArrayRef array, CFRange range,
                              const void *value)
 {
-  // FIXME: missing dispatch to ObjC
+  CF_OBJC_FUNCDISPATCH2(_kCFArrayTypeID, CFIndex, array,
+    "indexOfObject:inRange:", value, range);
 
   const void **contents;
   CFIndex idx;
@@ -354,22 +355,23 @@ CFIndex
 CFArrayGetLastIndexOfValue (CFArrayRef array, CFRange range,
                             const void *value)
 {
-  // FIXME: missing dispatch to ObjC
-
-  const void **contents;
+  CFArrayEqualCallBack equal;
   CFIndex idx;
   CFIndex start;
-  CFArrayEqualCallBack equal;
   
-  contents = array->_contents;
+  if (CF_IS_OBJC(_kCFArrayTypeID, array))
+    equal = kCFTypeArrayCallBacks.equal;
+  else
+    equal = array->_callBacks->equal;
+  
   start = range.location;
   idx = start + range.length;
-  equal = array->_callBacks->equal;
+  
   if (equal)
     {
       while (idx >= start)
         {
-          if (equal (value, contents[idx]))
+          if (equal (value, CFArrayGetValueAtIndex(array, idx)))
             break;
           --idx;
         }
@@ -378,7 +380,7 @@ CFArrayGetLastIndexOfValue (CFArrayRef array, CFRange range,
     {
       while (idx >= start)
         {
-          if (value == contents[idx])
+          if (value == CFArrayGetValueAtIndex(array, idx))
             break;
           --idx;
         }
@@ -572,7 +574,19 @@ void
 CFArrayReplaceValues (CFMutableArrayRef array, CFRange range,
                       const void **newValues, CFIndex newCount)
 {
-  // FIXME: missing dispatch to ObjC - replaceObjectsInRange
+  if (CF_IS_OBJC(_kCFArrayTypeID, array))
+    {
+      CFArrayRef temp;
+      
+      temp = CFArrayCreate(kCFAllocatorDefault, newValues,
+        newCount, &kCFTypeArrayCallBacks);
+      
+      CF_OBJC_VOIDCALLV(array,
+        "replaceObjectsInRange:withObjectsFromArray:", range, temp);
+      
+      CFRelease(temp);
+      return;
+    }
 
   const void **start;
   const void **end;
@@ -692,3 +706,4 @@ CFArraySortValues (CFMutableArrayRef array, CFRange range,
   CFArraySortValuesQuickSort (array, range.location,
     range.location + range.length - 1, comparator, context);
 }
+
