@@ -513,9 +513,7 @@ __CFCalendarAddComponentsV (CFCalendarRef cal, CFAbsoluteTime *at,
     {
       value = buffer[index++];
       
-      if (field == UCAL_MONTH)
-        value--;
-      else if (field != -1)
+      if (field != -1)
         {
           if (options & kCFCalendarComponentsWrap)
             ucal_roll (cal->_ucal, field, value, &err);
@@ -675,15 +673,16 @@ CFCalendarDecomposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime at,
   return retval;
 }
 
+
 Boolean
-CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
+__CFCalendarGetComponentDifferenceV (CFCalendarRef cal, CFAbsoluteTime startAT,
   CFAbsoluteTime resultAT, CFOptionFlags options,
-  const char *componentDesc, ...)
+  const char *componentDesc, int** buffer)
 {
   /* FIXME: ICU 4.8 introduced ucal_getFieldDifference() which
      should make implementing this function very easy. */
-  va_list arg;
   int *value;
+  int pos = 0;
   int32_t mult;
   UDate start;
   UDate end;
@@ -711,14 +710,13 @@ CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
   if (U_FAILURE(err))
     return false;
   
-  va_start (arg, componentDesc);
   while (CFCalendarGetCalendarICUUnitFromDescription(&componentDesc, &field))
     {
       int32_t min = 0;
       int32_t max = 1;
       double millis;
       
-      value = va_arg (arg, int*);
+      value = buffer[pos++];
 	  if (field == -1)
         value = NULL;
       
@@ -786,15 +784,45 @@ CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
       if (U_FAILURE(err))
         return false;
     }
-  va_end(arg);
   
   return true;
+}
+
+Boolean
+CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
+  CFAbsoluteTime resultAT, CFOptionFlags options,
+  const char *componentDesc, ...)
+{
+  // FIXME: dispatch to ObjC
+  const int count = strlen(componentDesc);
+  int i;
+  int **buffer;
+  va_list args;
+  Boolean retval;
+  
+  buffer = (int**) CFAllocatorAllocate(kCFAllocatorDefault,
+    sizeof(int*)*count, 0);
+
+  va_start(args, componentDesc);
+
+  for (i = 0; i < count; i++)
+    buffer[i] = va_arg(args, int*);
+
+  va_end(args);
+
+  retval = __CFCalendarGetComponentDifferenceV(cal, startAT, resultAT, options, componentDesc, buffer);
+
+  CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
+  return retval;
 }
 
 Boolean
 CFCalendarGetTimeRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit,
   CFAbsoluteTime at, CFAbsoluteTime *startp, CFTimeInterval *tip)
 {
+  CF_OBJC_FUNCDISPATCH4(_kCFCalendarTypeID, Boolean, cal,
+    "_cfGetTimeRangeOfUnit:forDate:startDate:interval:", unit, at, startp, tip);
+ 
   double start;
   double end;
   UCalendar *ucal;
@@ -890,6 +918,9 @@ CFCalendarGetMinMaxRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit,
 CFRange
 CFCalendarGetMaximumRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFCalendarTypeID, CFRange, cal,
+    "maximumRangeOfUnit:", unit);
+  
   return CFCalendarGetMinMaxRangeOfUnit (cal, unit,
     UCAL_GREATEST_MINIMUM, UCAL_LEAST_MAXIMUM);
 }
@@ -897,6 +928,9 @@ CFCalendarGetMaximumRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit)
 CFRange
 CFCalendarGetMinimumRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFCalendarTypeID, CFRange, cal,
+    "minimumRangeOfUnit:", unit);
+  
   return CFCalendarGetMinMaxRangeOfUnit (cal, unit,
     UCAL_MINIMUM, UCAL_MAXIMUM);
 }

@@ -42,6 +42,12 @@ extern Boolean
 __CFCalendarDecomposeAbsoluteTimeV (CFCalendarRef cal, CFAbsoluteTime at,
   const char *componentDesc, int** buffer);
 
+extern Boolean
+__CFCalendarGetComponentDifferenceV (CFCalendarRef cal, CFAbsoluteTime startAT,
+  CFAbsoluteTime resultAT, CFOptionFlags options,
+  const char *componentDesc, int** buffer);
+
+
 #define MAX_COMPONENT_DESC_LENGTH 20
 
 @interface NSCFCalendar : NSCalendar
@@ -50,6 +56,11 @@ NSCFTYPE_VARS
 
 @interface NSCalendar (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID;
+- (Boolean) _cfGetTimeRangeOfUnit:(CFCalendarUnit)unit
+                           forDate:(CFAbsoluteTime)at
+                           startDate:(CFAbsoluteTime*)startp
+                           interval:(CFTimeInterval*)tip;
+                           
 @end
 
 static void NSDateComponentToCF(char* descriptionString,
@@ -345,6 +356,35 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 - (CFTypeID) _cfTypeID
 {
 	return CFCalendarGetTypeID();
+}
+
+- (Boolean) _cfGetTimeRangeOfUnit:(CFCalendarUnit)unit
+                           forDate:(CFAbsoluteTime)at
+                           startDate:(CFAbsoluteTime*)startp
+                           interval:(CFTimeInterval*)tip;
+{
+  /* CFCalendarUnit and NSCalendarUnit are compatible */
+  /* CFTimeInterval and NSTimeInterval are compatible */
+  
+  NSDate* forDate;
+  NSDate* startDate = NULL;
+  Boolean rv;
+  
+  forDate = [NSDate dateWithTimeIntervalSince1970: at
+    + kCFAbsoluteTimeIntervalSince1970];
+  
+  rv = [self rangeOfUnit: (NSCalendarUnit)unit
+               startDate: &startDate
+                interval: (NSTimeInterval*)tip
+                 forDate: forDate];
+
+  if (startDate != NULL)
+    {
+      *startp = [startDate timeIntervalSince1970]
+        - kCFAbsoluteTimeIntervalSince1970;
+    }
+
+  return rv;
 }
 @end
 
