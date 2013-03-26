@@ -189,7 +189,9 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 
 - (NSTimeZone*)timeZone
 {
-	return (NSTimeZone*) CFCalendarCopyTimeZone((CFCalendarRef) self);
+	NSTimeZone *tz;
+	tz = (NSTimeZone*) CFCalendarCopyTimeZone((CFCalendarRef) self);
+	return AUTORELEASE(tz);
 }
 
 - (NSString*)calendarIdentifier

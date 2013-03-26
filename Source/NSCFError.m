@@ -92,7 +92,7 @@ NSCFTYPE_VARS
 
 - (NSDictionary*) userInfo
 {
-  return CFErrorCopyUserInfo (self);
+  return AUTORELEASE(CFErrorCopyUserInfo (self));
 }
 
 @end
