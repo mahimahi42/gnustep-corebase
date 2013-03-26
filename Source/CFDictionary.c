@@ -124,6 +124,9 @@ CFDictionaryCreate (CFAllocatorRef allocator, const void **keys,
 CFDictionaryRef
 CFDictionaryCreateCopy (CFAllocatorRef allocator, CFDictionaryRef dict)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFDictionaryTypeID, CFDictionaryRef, dict,
+    "copy");
+  
   return (CFDictionaryRef)GSHashTableCreateCopy (allocator,
     (GSHashTableRef)dict);
 }
@@ -251,6 +254,9 @@ CFMutableDictionaryRef
 CFDictionaryCreateMutableCopy (CFAllocatorRef allocator, CFIndex capacity,
   CFDictionaryRef dict)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFDictionaryTypeID, CFMutableDictionaryRef, dict,
+    "mutableCopy");
+
   return (CFMutableDictionaryRef)GSHashTableCreateMutableCopy (allocator,
     (GSHashTableRef)dict, capacity);
 }

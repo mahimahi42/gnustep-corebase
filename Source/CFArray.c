@@ -470,6 +470,9 @@ CFMutableArrayRef
 CFArrayCreateMutableCopy (CFAllocatorRef allocator, CFIndex capacity,
                           CFArrayRef array)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFArrayTypeID, CFMutableArrayRef, array,
+    "mutableCopy");
+
   CFMutableArrayRef new;
   const CFArrayCallBacks *callbacks;
   

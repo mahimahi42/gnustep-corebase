@@ -200,6 +200,9 @@ CFDataCreateWithBytesNoCopy (CFAllocatorRef allocator, const UInt8 *bytes,
 CFDataRef
 CFDataCreateCopy (CFAllocatorRef allocator, CFDataRef d)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFDataTypeID, CFDataRef, d,
+    "copy");
+
   return CFDataCreate_internal (allocator, CFDataGetBytePtr(d),
     CFDataGetLength(d), NULL, true);
 }
@@ -279,6 +282,9 @@ CFMutableDataRef
 CFDataCreateMutableCopy (CFAllocatorRef allocator, CFIndex capacity,
   CFDataRef d)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFDataTypeID, CFMutableDataRef, d,
+    "mutableCopy");
+
   CFMutableDataRef newData;
   CFIndex length;
   

@@ -658,6 +658,9 @@ CFStringCreateWithBytesNoCopy (CFAllocatorRef alloc, const UInt8 *bytes,
 CFStringRef
 CFStringCreateCopy (CFAllocatorRef alloc, CFStringRef str)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFStringTypeID, CFStringRef, str,
+    "copy");
+
   CFIndex length;
   CFStringRef new;
   CFStringEncoding enc;

@@ -113,6 +113,9 @@ CFSetCreate (CFAllocatorRef allocator, const void **values, CFIndex numValues,
 CFSetRef
 CFSetCreateCopy (CFAllocatorRef allocator, CFSetRef set)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFSetTypeID, CFSetRef, set,
+    "copy");
+  
   return (CFSetRef)GSHashTableCreateCopy (allocator, (GSHashTableRef)set);
 }
 
@@ -215,6 +218,9 @@ CFMutableSetRef
 CFSetCreateMutableCopy (CFAllocatorRef allocator, CFIndex capacity,
   CFSetRef set)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFSetTypeID, CFMutableSetRef, set,
+    "copy");
+  
   return (CFMutableSetRef)GSHashTableCreateMutableCopy (allocator,
     (GSHashTableRef)set, capacity);
 }
