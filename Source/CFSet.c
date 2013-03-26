@@ -120,7 +120,21 @@ void
 CFSetApplyFunction (CFSetRef set,
   CFSetApplierFunction applier, void *context)
 {
-  // TODO
+  // TODO: could be made more efficient by providing a specialized
+  // implementation for the CF_IS_OBJC case
+  
+  const CFIndex count = CFSetGetCount(set);
+  void **values = (void**) CFAllocatorAllocate(NULL, sizeof(void*) * count, 0);
+  int i;
+  
+  CFSetGetValues(set, (const void **) values);
+  
+  for (i = 0; i < count; i++)
+    {
+      applier(values[i], context);
+    }
+  
+  CFAllocatorDeallocate(NULL, (void*) values);
 }
 
 Boolean
@@ -158,7 +172,7 @@ CFSetGetValues (CFSetRef set, const void **values)
 const void *
 CFSetGetValue (CFSetRef set, const void *value)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, Boolean, set, "_cfGetValue:",
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void*, set, "_cfGetValue:",
     value);
   
   return GSHashTableGetValue ((GSHashTableRef)set, value);
