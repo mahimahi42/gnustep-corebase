@@ -88,292 +88,292 @@ NSCFTYPE_VARS
 @end
 
 static void NSDateComponentToCF(char* descriptionString,
-		int* valueBuffer, int* count, NSInteger value, char code)
+    int* valueBuffer, int* count, NSInteger value, char code)
 {
-	if (value != NSUndefinedDateComponent)
-	{
-		descriptionString[*count] = code;
-		valueBuffer[*count] = (int)value;
-		(*count)++;
-	}
+  if (value != NSUndefinedDateComponent)
+  {
+    descriptionString[*count] = code;
+    valueBuffer[*count] = (int)value;
+    (*count)++;
+  }
 }
 
 static void NSDateComponentsToCF(NSDateComponents* comps,
-		char* descriptionString, int* valueBuffer)
+    char* descriptionString, int* valueBuffer)
 {
-	int numComponents = 0;
+  int numComponents = 0;
 
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'G', [comps era]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'y', [comps year]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'M', [comps month]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'd', [comps day]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'H', [comps hour]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'm',
-			[comps minute]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 's',
-			[comps second]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'w',
-			[comps week]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'F',
-			[comps weekdayOrdinal]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'E',
-			[comps weekday]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'G', [comps era]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'y', [comps year]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'M', [comps month]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'd', [comps day]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'H', [comps hour]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'm',
+      [comps minute]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 's',
+      [comps second]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'w',
+      [comps week]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'F',
+      [comps weekdayOrdinal]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'E',
+      [comps weekday]);
 #if 0 // requires a patched Base
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'W',
-			[comps weekOfMonth]);
-	NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'Y',
-			[comps yearForWeekOfYear]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'W',
+      [comps weekOfMonth]);
+  NSDateComponentToCF(descriptionString, valueBuffer, &numComponents, 'Y',
+      [comps yearForWeekOfYear]);
 #endif
 
-	descriptionString[numComponents] = '\0';
+  descriptionString[numComponents] = '\0';
 }
 
 static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 {
-	int numComponents = 0;
+  int numComponents = 0;
 
 #define IFFLAG(flag, c) if (flags & flag) descriptionString[numComponents++] = c
 
-	IFFLAG(NSEraCalendarUnit, 'G');
-	IFFLAG(NSYearCalendarUnit, 'y');
-	IFFLAG(NSMonthCalendarUnit, 'M');
-	IFFLAG(NSDayCalendarUnit, 'd');
-	IFFLAG(NSHourCalendarUnit, 'H');
-	IFFLAG(NSMinuteCalendarUnit, 'm');
-	IFFLAG(NSSecondCalendarUnit, 's');
-	IFFLAG(NSWeekCalendarUnit, 'w');
-	IFFLAG(NSWeekdayCalendarUnit, 'E');
-	IFFLAG(NSWeekdayOrdinalCalendarUnit, 'F');
+  IFFLAG(NSEraCalendarUnit, 'G');
+  IFFLAG(NSYearCalendarUnit, 'y');
+  IFFLAG(NSMonthCalendarUnit, 'M');
+  IFFLAG(NSDayCalendarUnit, 'd');
+  IFFLAG(NSHourCalendarUnit, 'H');
+  IFFLAG(NSMinuteCalendarUnit, 'm');
+  IFFLAG(NSSecondCalendarUnit, 's');
+  IFFLAG(NSWeekCalendarUnit, 'w');
+  IFFLAG(NSWeekdayCalendarUnit, 'E');
+  IFFLAG(NSWeekdayOrdinalCalendarUnit, 'F');
 #if 0 // requires a patched Base
-	IFFLAG(NSWeekOfMonthCalendarUnit, 'W');
-	IFFLAG(NSWeekOfYearCalendarUnit, 'w');
-	IFFLAG(NSYearForWeekOfYearCalendarUnit, 'Y');
+  IFFLAG(NSWeekOfMonthCalendarUnit, 'W');
+  IFFLAG(NSWeekOfYearCalendarUnit, 'w');
+  IFFLAG(NSYearForWeekOfYearCalendarUnit, 'Y');
 #endif
 
 #undef IFFLAG
 
-	descriptionString[numComponents] = '\0';
+  descriptionString[numComponents] = '\0';
 }
 
 @implementation NSCFCalendar
 - (id)initWithCalendarIdentifier:(NSString*)string
 {
-	RELEASE(self);
+  RELEASE(self);
 
-	self = (NSCFCalendar*)
-		CFCalendarCreateWithIdentifier(kCFAllocatorDefault,
-		(CFStringRef) string);
-	
-	return self;
+  self = (NSCFCalendar*)
+    CFCalendarCreateWithIdentifier(kCFAllocatorDefault,
+    (CFStringRef) string);
+  
+  return self;
 }
 
 - (void)setFirstWeekday:(NSUInteger)weekday
 {
-	CFCalendarSetFirstWeekday((CFCalendarRef) self, weekday);
+  CFCalendarSetFirstWeekday((CFCalendarRef) self, weekday);
 }
 
 - (void)setLocale:(NSLocale*)locale
 {
-	CFCalendarSetLocale((CFCalendarRef) self, (CFLocaleRef) locale);
+  CFCalendarSetLocale((CFCalendarRef) self, (CFLocaleRef) locale);
 }
 
 - (void)setMinimumDaysInFirstWeek:(NSUInteger)mdw
 {
-	CFCalendarSetMinimumDaysInFirstWeek((CFCalendarRef) self, mdw);
+  CFCalendarSetMinimumDaysInFirstWeek((CFCalendarRef) self, mdw);
 }
 
 - (void)setTimeZone:(NSTimeZone*)tz
 {
-	CFCalendarSetTimeZone((CFCalendarRef) self, (CFTimeZoneRef)tz);
+  CFCalendarSetTimeZone((CFCalendarRef) self, (CFTimeZoneRef)tz);
 }
 
 - (NSTimeZone*)timeZone
 {
-	NSTimeZone *tz;
-	tz = (NSTimeZone*) CFCalendarCopyTimeZone((CFCalendarRef) self);
-	return AUTORELEASE(tz);
+  NSTimeZone *tz;
+  tz = (NSTimeZone*) CFCalendarCopyTimeZone((CFCalendarRef) self);
+  return AUTORELEASE(tz);
 }
 
 - (NSString*)calendarIdentifier
 {
-	return (NSString*) CFCalendarGetIdentifier((CFCalendarRef) self);
+  return (NSString*) CFCalendarGetIdentifier((CFCalendarRef) self);
 }
 
 - (NSDateComponents *)components:(NSUInteger)unitFlags
-						fromDate:(NSDate *)date
+            fromDate:(NSDate *)date
 {
-	NSDateComponents *comps;
-	CFAbsoluteTime at;
-	char componentDesc[MAX_COMPONENT_DESC_LENGTH+1];
-	int values[MAX_COMPONENT_DESC_LENGTH];
-	int* valuePointers[MAX_COMPONENT_DESC_LENGTH];
-	int i;
+  NSDateComponents *comps;
+  CFAbsoluteTime at;
+  char componentDesc[MAX_COMPONENT_DESC_LENGTH+1];
+  int values[MAX_COMPONENT_DESC_LENGTH];
+  int* valuePointers[MAX_COMPONENT_DESC_LENGTH];
+  int i;
 
-	for (i = 0; i < MAX_COMPONENT_DESC_LENGTH; i++)
-		valuePointers[i] = &values[i];
+  for (i = 0; i < MAX_COMPONENT_DESC_LENGTH; i++)
+    valuePointers[i] = &values[i];
 
-	at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
+  at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
 
-	NSCalendarUnitToCF(unitFlags, componentDesc);
+  NSCalendarUnitToCF(unitFlags, componentDesc);
 
-	if (!__CFCalendarDecomposeAbsoluteTimeV((CFCalendarRef) self, at,
-				componentDesc, valuePointers))
-	{
-		return NO;
-	}
+  if (!__CFCalendarDecomposeAbsoluteTimeV((CFCalendarRef) self, at,
+        componentDesc, valuePointers))
+  {
+    return NO;
+  }
 
-	comps = [[NSDateComponents alloc] init];
+  comps = [[NSDateComponents alloc] init];
 
-	// TODO
-	return comps;
+  // TODO
+  return comps;
 }
 
 - (NSDateComponents *)components:(NSUInteger)unitFlags
-						fromDate:(NSDate *)startingDate
-						  toDate:(NSDate *)resultDate
-						 options:(NSUInteger)opts
+            fromDate:(NSDate *)startingDate
+              toDate:(NSDate *)resultDate
+             options:(NSUInteger)opts
 {
-	NSDateComponents *comps;
-	CFAbsoluteTime atStart, atResult;
-	char componentDesc[MAX_COMPONENT_DESC_LENGTH+1];
-	int values[MAX_COMPONENT_DESC_LENGTH];
-	int* valuePointers[MAX_COMPONENT_DESC_LENGTH];
-	int i;
+  NSDateComponents *comps;
+  CFAbsoluteTime atStart, atResult;
+  char componentDesc[MAX_COMPONENT_DESC_LENGTH+1];
+  int values[MAX_COMPONENT_DESC_LENGTH];
+  int* valuePointers[MAX_COMPONENT_DESC_LENGTH];
+  int i;
 
-	for (i = 0; i < MAX_COMPONENT_DESC_LENGTH; i++)
-		valuePointers[i] = &values[i];
+  for (i = 0; i < MAX_COMPONENT_DESC_LENGTH; i++)
+    valuePointers[i] = &values[i];
 
-	atStart = [startingDate timeIntervalSince1970]
-		- kCFAbsoluteTimeIntervalSince1970;
-	atResult = [resultDate timeIntervalSince1970]
-		- kCFAbsoluteTimeIntervalSince1970;
+  atStart = [startingDate timeIntervalSince1970]
+    - kCFAbsoluteTimeIntervalSince1970;
+  atResult = [resultDate timeIntervalSince1970]
+    - kCFAbsoluteTimeIntervalSince1970;
 
-	NSCalendarUnitToCF(unitFlags, componentDesc);
+  NSCalendarUnitToCF(unitFlags, componentDesc);
 
-	// opts are compatible between NS and CF
-	if (!__CFCalendarGetComponentDifferenceV((CFCalendarRef) self, atStart,
-				atResult, opts, componentDesc, valuePointers))
-	{
-		return NULL;
-	}
+  // opts are compatible between NS and CF
+  if (!__CFCalendarGetComponentDifferenceV((CFCalendarRef) self, atStart,
+        atResult, opts, componentDesc, valuePointers))
+  {
+    return NULL;
+  }
 
-	comps = [[NSDateComponents alloc] init];
+  comps = [[NSDateComponents alloc] init];
 
-	// TODO:
-	return comps;
+  // TODO:
+  return comps;
 }
 
 - (NSDate *)dateByAddingComponents:(NSDateComponents *)comps
-							toDate:(NSDate *)date
-						   options:(NSUInteger)opts
+              toDate:(NSDate *)date
+               options:(NSUInteger)opts
 {
-	char components[MAX_COMPONENT_DESC_LENGTH+1];
-	int buffer[MAX_COMPONENT_DESC_LENGTH];
-	CFAbsoluteTime at;
+  char components[MAX_COMPONENT_DESC_LENGTH+1];
+  int buffer[MAX_COMPONENT_DESC_LENGTH];
+  CFAbsoluteTime at;
 
-	NSDateComponentsToCF(comps, components, buffer);
+  NSDateComponentsToCF(comps, components, buffer);
 
-	NSTimeZone* tz = [comps timeZone];
-	if (tz != NULL)
-		[self setTimeZone: tz];
+  NSTimeZone* tz = [comps timeZone];
+  if (tz != NULL)
+    [self setTimeZone: tz];
 
-	at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
+  at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
 
-	// NS opts are compatible with CF opts here
-	if (!__CFCalendarAddComponentsV((CFCalendarRef) self, &at,
-				opts, components, buffer))
-	{
-		return NULL;
-	}
+  // NS opts are compatible with CF opts here
+  if (!__CFCalendarAddComponentsV((CFCalendarRef) self, &at,
+        opts, components, buffer))
+  {
+    return NULL;
+  }
 
-	return [NSDate dateWithTimeIntervalSince1970: at
-		+ kCFAbsoluteTimeIntervalSince1970];
+  return [NSDate dateWithTimeIntervalSince1970: at
+    + kCFAbsoluteTimeIntervalSince1970];
 }
 
 - (NSDate *)dateFromComponents:(NSDateComponents *)comps
 {
-	char components[MAX_COMPONENT_DESC_LENGTH+1];
-	int buffer[MAX_COMPONENT_DESC_LENGTH];
-	CFAbsoluteTime at;
+  char components[MAX_COMPONENT_DESC_LENGTH+1];
+  int buffer[MAX_COMPONENT_DESC_LENGTH];
+  CFAbsoluteTime at;
 
-	NSDateComponentsToCF(comps, components, buffer);
+  NSDateComponentsToCF(comps, components, buffer);
 
-	NSTimeZone* tz = [comps timeZone];
-	if (tz != NULL)
-		[self setTimeZone: tz];
+  NSTimeZone* tz = [comps timeZone];
+  if (tz != NULL)
+    [self setTimeZone: tz];
 
-	if (!__CFCalendarComposeAbsoluteTimeV((CFCalendarRef) self, &at,
-				components, buffer))
-	{
-		return NULL;
-	}
+  if (!__CFCalendarComposeAbsoluteTimeV((CFCalendarRef) self, &at,
+        components, buffer))
+  {
+    return NULL;
+  }
 
-	return [NSDate dateWithTimeIntervalSince1970: at
-		+ kCFAbsoluteTimeIntervalSince1970];
+  return [NSDate dateWithTimeIntervalSince1970: at
+    + kCFAbsoluteTimeIntervalSince1970];
 }
 
 - (NSUInteger)firstWeekday
 {
-	return CFCalendarGetFirstWeekday((CFCalendarRef) self);
+  return CFCalendarGetFirstWeekday((CFCalendarRef) self);
 }
 
 - (NSLocale*)locale
 {
-	return (NSLocale*) CFCalendarCopyLocale((CFCalendarRef) self);
+  return (NSLocale*) CFCalendarCopyLocale((CFCalendarRef) self);
 }
 
 - (NSRange)maximumRangeOfUnit:(NSCalendarUnit)unit
 {
-	CFRange r;
-	r = CFCalendarGetMaximumRangeOfUnit((CFCalendarRef) self, unit);
-	return NSMakeRange(r.location, r.length);
+  CFRange r;
+  r = CFCalendarGetMaximumRangeOfUnit((CFCalendarRef) self, unit);
+  return NSMakeRange(r.location, r.length);
 }
 
 - (NSUInteger)minimumDaysInFirstWeek
 {
-	return CFCalendarGetMinimumDaysInFirstWeek((CFCalendarRef) self);
+  return CFCalendarGetMinimumDaysInFirstWeek((CFCalendarRef) self);
 }
 
 - (NSRange)minimumRangeOfUnit:(NSCalendarUnit)unit
 {
-	CFRange r;
-	r = CFCalendarGetMinimumRangeOfUnit((CFCalendarRef) self, unit);
-	return NSMakeRange(r.location, r.length);
+  CFRange r;
+  r = CFCalendarGetMinimumRangeOfUnit((CFCalendarRef) self, unit);
+  return NSMakeRange(r.location, r.length);
 }
 
 - (NSUInteger)ordinalityOfUnit:(NSCalendarUnit)smaller
-						inUnit:(NSCalendarUnit)larger
-					   forDate:(NSDate *)date
+            inUnit:(NSCalendarUnit)larger
+             forDate:(NSDate *)date
 {
-	CFAbsoluteTime at;
-	CFIndex o;
+  CFAbsoluteTime at;
+  CFIndex o;
 
-	at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
-	o = CFCalendarGetOrdinalityOfUnit((CFCalendarRef) self,
-			smaller, larger, at);
+  at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
+  o = CFCalendarGetOrdinalityOfUnit((CFCalendarRef) self,
+      smaller, larger, at);
 
-	return o;
+  return o;
 }
 
 - (NSRange)rangeOfUnit:(NSCalendarUnit)smaller
-				inUnit:(NSCalendarUnit)larger
-			   forDate:(NSDate *)date
+        inUnit:(NSCalendarUnit)larger
+         forDate:(NSDate *)date
 {
-	CFAbsoluteTime at;
-	CFRange cr;
+  CFAbsoluteTime at;
+  CFRange cr;
 
-	at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
-	cr = CFCalendarGetRangeOfUnit((CFCalendarRef) self, smaller, larger, at);
+  at = [date timeIntervalSince1970] - kCFAbsoluteTimeIntervalSince1970;
+  cr = CFCalendarGetRangeOfUnit((CFCalendarRef) self, smaller, larger, at);
 
-	return NSMakeRange(cr.location, cr.length);
+  return NSMakeRange(cr.location, cr.length);
 }
 
 - (BOOL)rangeOfUnit:(NSCalendarUnit)unit
-		  startDate:(NSDate **)datep
-		   interval:(NSTimeInterval *)tip
-			forDate:(NSDate *)date
+      startDate:(NSDate **)datep
+       interval:(NSTimeInterval *)tip
+      forDate:(NSDate *)date
 {
-	return NO; // Even Apple doesn't implement this
+  return NO; // Even Apple doesn't implement this
 }
 
 @end
@@ -381,7 +381,7 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 @implementation NSCalendar (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID
 {
-	return CFCalendarGetTypeID();
+  return CFCalendarGetTypeID();
 }
 
 - (Boolean) _cfGetTimeRangeOfUnit:(CFCalendarUnit)unit

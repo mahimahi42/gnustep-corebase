@@ -39,69 +39,70 @@ NSCFTYPE_VARS
 
 static CFStringRef NSLocaleKeyToCFLocaleKey(id key)
 {
-	CFStringRef cfKey = NULL;
+  CFStringRef cfKey = NULL;
 
 #define CASE(keyName) if([key isEqual: NS##keyName]) cfKey = kCF##keyName; else
-	CASE(LocaleIdentifier)
-	CASE(LocaleLanguageCode)
-	CASE(LocaleCountryCode)
-	CASE(LocaleScriptCode)
-	CASE(LocaleVariantCode)
-	CASE(LocaleExemplarCharacterSet)
-	CASE(LocaleCalendar)
-	CASE(LocaleCollationIdentifier)
-	CASE(LocaleUsesMetricSystem)
-	CASE(LocaleMeasurementSystem)
-	CASE(LocaleDecimalSeparator)
-	CASE(LocaleGroupingSeparator)
-	CASE(LocaleCurrencySymbol)
-	CASE(LocaleCurrencyCode)
-	CASE(LocaleCollatorIdentifier)
-	CASE(LocaleQuotationBeginDelimiterKey)
-	CASE(LocaleQuotationEndDelimiterKey)
-	CASE(LocaleAlternateQuotationBeginDelimiterKey)
-	CASE(LocaleAlternateQuotationEndDelimiterKey);
-	
+  CASE(LocaleIdentifier)
+  CASE(LocaleLanguageCode)
+  CASE(LocaleCountryCode)
+  CASE(LocaleScriptCode)
+  CASE(LocaleVariantCode)
+  CASE(LocaleExemplarCharacterSet)
+  CASE(LocaleCalendar)
+  CASE(LocaleCollationIdentifier)
+  CASE(LocaleUsesMetricSystem)
+  CASE(LocaleMeasurementSystem)
+  CASE(LocaleDecimalSeparator)
+  CASE(LocaleGroupingSeparator)
+  CASE(LocaleCurrencySymbol)
+  CASE(LocaleCurrencyCode)
+  CASE(LocaleCollatorIdentifier)
+  CASE(LocaleQuotationBeginDelimiterKey)
+  CASE(LocaleQuotationEndDelimiterKey)
+  CASE(LocaleAlternateQuotationBeginDelimiterKey)
+  CASE(LocaleAlternateQuotationEndDelimiterKey);
+  
 #undef CASE
-	return cfKey;
+  return cfKey;
 }
 
 @implementation NSCFLocale
 + (void) load
 {
-	NSCFInitialize ();
+  NSCFInitialize ();
 }
 
 + (void) initialize
 {
-	GSObjCAddClassBehavior (self, [NSCFType class]);
+  GSObjCAddClassBehavior (self, [NSCFType class]);
 }
 
 - (id) initWithLocaleIdentifier:(NSString*)string
 {
-	RELEASE(self);
+  RELEASE(self);
 
-	self = (NSCFLocale*) CFLocaleCreate(kCFAllocatorDefault, (CFStringRef) string);
-	return self;
+  self = (NSCFLocale*) CFLocaleCreate(kCFAllocatorDefault,
+    (CFStringRef) string);
+  return self;
 }
 
 - (NSString*) localeIdentifier
 {
-	return (NSString*) CFLocaleGetIdentifier((CFLocaleRef) self);
+  return (NSString*) CFLocaleGetIdentifier((CFLocaleRef) self);
 }
 
 - (id) objectForKey:(id)key
 {
-	CFStringRef cfKey = NSLocaleKeyToCFLocaleKey(key);
+  CFStringRef cfKey = NSLocaleKeyToCFLocaleKey(key);
 
-	return (id) CFLocaleGetValue((CFLocaleRef) self, cfKey);
+  return (id) CFLocaleGetValue((CFLocaleRef) self, cfKey);
 }
 
 - (NSString*) displayNameForKey:(id)key value:(id)value
 {
-	CFStringRef cfKey = NSLocaleKeyToCFLocaleKey(key);
-	return (NSString*) CFLocaleCopyDisplayNameForPropertyValue(
-		(CFLocaleRef) self, cfKey, value);
+  CFStringRef cfKey = NSLocaleKeyToCFLocaleKey(key);
+  return (NSString*) CFLocaleCopyDisplayNameForPropertyValue(
+    (CFLocaleRef) self, cfKey, value);
 }
 
 @end
@@ -109,7 +110,7 @@ static CFStringRef NSLocaleKeyToCFLocaleKey(id key)
 @implementation NSLocale (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID
 {
-	return CFLocaleGetTypeID();
+  return CFLocaleGetTypeID();
 }
 @end
 
