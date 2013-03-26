@@ -469,8 +469,7 @@ CFStringRef
 CFTimeZoneCopyLocalizedName (CFTimeZoneRef tz, CFTimeZoneNameStyle style,
   CFLocaleRef locale)
 {
-  // TODO: retain?
-  CF_OBJC_FUNCDISPATCH2(_kCFTimeZoneTypeID, CFStringRef, tz,
+  CF_OBJC_FUNCDISPATCHV_RETAINED(_kCFTimeZoneTypeID, CFStringRef, tz,
     "localizedName:locale:", style, locale);
   
 #if HAVE_ICU
