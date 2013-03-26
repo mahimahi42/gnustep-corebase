@@ -151,12 +151,18 @@ CFDictionaryApplyFunction (CFDictionaryRef dict,
 Boolean
 CFDictionaryContainsKey (CFDictionaryRef dict, const void *key)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFDictionaryTypeID, Boolean, dict,
+    "objectForKey:", key);
+  
   return GSHashTableContainsKey ((GSHashTableRef)dict, key);
 }
 
 Boolean
 CFDictionaryContainsValue (CFDictionaryRef dict, const void *value)
 {
+  if (CF_IS_OBJC(_kCFDictionaryTypeID, dict))
+    return CFDictionaryGetCountOfValue(dict, value) ? true : false;
+  
   return GSHashTableContainsValue ((GSHashTableRef)dict, value);
 }
 
@@ -171,12 +177,18 @@ CFDictionaryGetCount (CFDictionaryRef dict)
 CFIndex
 CFDictionaryGetCountOfKey (CFDictionaryRef dict, const void *key)
 {
+  if (CF_IS_OBJC(_kCFDictionaryTypeID, dict))
+    return CFDictionaryContainsKey(dict, key) ? 1 : 0;
+  
   return GSHashTableGetCountOfKey ((GSHashTableRef)dict, key);
 }
 
 CFIndex
 CFDictionaryGetCountOfValue (CFDictionaryRef dict, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFDictionaryTypeID, Boolean, dict,
+    "_cfCountOfValue:", value);
+  
   return GSHashTableGetCountOfValue ((GSHashTableRef)dict, value);
 }
 
@@ -247,6 +259,9 @@ void
 CFDictionaryAddValue (CFMutableDictionaryRef dict, const void *key,
   const void *value)
 {
+  CF_OBJC_FUNCDISPATCH2(_kCFDictionaryTypeID, void, dict,
+    "setObject:forKey:", key, value);
+  
   GSHashTableAddValue ((GSHashTableRef)dict, key, value);
 }
 
@@ -271,6 +286,9 @@ void
 CFDictionaryReplaceValue (CFMutableDictionaryRef dict, const void *key,
   const void *value)
 {
+  CF_OBJC_FUNCDISPATCH2(_kCFDictionaryTypeID, void, dict,
+    "_cfReplaceValue::", key, value);
+  
   GSHashTableReplaceValue ((GSHashTableRef)dict, key, value);
 }
 
@@ -279,7 +297,7 @@ CFDictionarySetValue (CFMutableDictionaryRef dict, const void *key,
   const void *value)
 {
   CF_OBJC_FUNCDISPATCH2(_kCFDictionaryTypeID, void, dict,
-    "setObject:forKey:", value, key);
+    "_cfSetValue::", key, value);
   
   GSHashTableSetValue ((GSHashTableRef)dict, key, value);
 }

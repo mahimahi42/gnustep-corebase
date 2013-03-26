@@ -108,6 +108,7 @@ NSCFTYPE_VARS
                                    objects: (id*)stackbuf
                                      count: (NSUInteger)len
 {
+  // TODO: inefficient
   NSEnumerator *enuM = [self objectEnumerator];
   
   return [enuM countByEnumeratingWithState: state
