@@ -120,36 +120,47 @@ void
 CFSetApplyFunction (CFSetRef set,
   CFSetApplierFunction applier, void *context)
 {
-  
+  // TODO
 }
 
 Boolean
 CFSetContainsValue (CFSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, Boolean, set, "containsObject:",
+    value);
+  
   return GSHashTableContainsKey ((GSHashTableRef)set, value);
 }
 
 CFIndex
 CFSetGetCount (CFSetRef set)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFSetTypeID, CFIndex, set, "count");
+  
   return GSHashTableGetCount ((GSHashTableRef)set);
 }
 
 CFIndex
 CFSetGetCountOfValue (CFSetRef set, const void *value)
 {
-  return GSHashTableGetCountOfKey ((GSHashTableRef)set, value) > 0 ? 1 : 0;
+  return CFSetContainsValue(set, value) ? 1 : 0;
 }
 
 void
 CFSetGetValues (CFSetRef set, const void **values)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void, set, "_cfGetValues:",
+    values);
+  
   GSHashTableGetKeysAndValues ((GSHashTableRef)set, values, NULL);
 }
 
 const void *
 CFSetGetValue (CFSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, Boolean, set, "_cfGetValue:",
+    value);
+  
   return GSHashTableGetValue ((GSHashTableRef)set, value);
 }
 
@@ -197,30 +208,42 @@ CFSetCreateMutableCopy (CFAllocatorRef allocator, CFIndex capacity,
 void
 CFSetAddValue (CFMutableSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void, set, "addObject:", value);
+  
   GSHashTableAddValue ((GSHashTableRef)set, value, value);
 }
 
 void
 CFSetRemoveAllValues (CFMutableSetRef set)
 {
+  CF_OBJC_FUNCDISPATCH0(_kCFSetTypeID, void, set, "removeAllObjects");
+  
   GSHashTableRemoveAll ((GSHashTableRef)set);
 }
 
 void
 CFSetRemoveValue (CFMutableSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void, set, "removeObject:", value);
+  
   GSHashTableRemoveValue ((GSHashTableRef)set, value);
 }
 
 void
 CFSetReplaceValue (CFMutableSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void, set, "_cfReplaceValue:",
+    value);
+  
   GSHashTableReplaceValue ((GSHashTableRef)set, value, value);
 }
 
 void
 CFSetSetValue (CFMutableSetRef set, const void *value)
 {
+  CF_OBJC_FUNCDISPATCH1(_kCFSetTypeID, void, set, "_cfSetValue:",
+    value);
+  
   GSHashTableSetValue ((GSHashTableRef)set, value, value);
 }
 

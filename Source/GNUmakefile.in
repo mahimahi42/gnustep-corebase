@@ -94,7 +94,8 @@ libgnustep-corebase_OBJC_FILES = \
   NSCFType.m \
   NSCFNumber.m \
   NSCFLocale.m \
-  NSCFCalendar.m
+  NSCFCalendar.m \
+  NSCFSet.m
 
 libgnustep-corebase_LIBRARIES_DEPEND_UPON += @LIBS@
 libgnustep-corebase_HEADER_FILES_DIR = ../Headers/CoreFoundation
