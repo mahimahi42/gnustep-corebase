@@ -57,10 +57,34 @@ NSCFTYPE_VARS
 @interface NSCalendar (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID;
 - (Boolean) _cfGetTimeRangeOfUnit:(CFCalendarUnit)unit
-                           forDate:(CFAbsoluteTime)at
-                           startDate:(CFAbsoluteTime*)startp
-                           interval:(CFTimeInterval*)tip;
-                           
+                                 :(CFAbsoluteTime)at
+                                 :(CFAbsoluteTime*)startp
+                                 :(CFTimeInterval*)tip;
+
+- (Boolean) _cfGetComponentDifference:(CFAbsoluteTime)startAT
+                                     :(CFAbsoluteTime)resultAT
+                                     :(CFOptionFlags)options
+                                     :(const char*)componentDesc
+                                     :(int*)components;
+- (NSRange) _cfGetRangeOfUnit:(NSCalendarUnit)smaller
+                             :(NSCalendarUnit)larger
+                             :(CFAbsoluteTime)date;
+
+- (NSUInteger) _cfGetOrdinalityOfUnit:(NSCalendarUnit)smaller
+                                     :(NSCalendarUnit)larger
+                                     :(CFAbsoluteTime)date;
+
+- (Boolean) _cfDecomposeAbsoluteTime:(CFAbsoluteTime)at
+                                    :(const char*)componentDesc
+                                    :(int**) components;
+
+- (Boolean) _cfComposeAbsoluteTime:(CFAbsoluteTime*)at
+                                    :(const char*)componentDesc
+                                    :(int*) components;
+- (Boolean) _cfAddComponents:(CFAbsoluteTime*)at
+                            :(NSUInteger)opts
+                            :(const char*)componentDesc
+                            :(int*) components;
 @end
 
 static void NSDateComponentToCF(char* descriptionString,
@@ -359,9 +383,9 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 }
 
 - (Boolean) _cfGetTimeRangeOfUnit:(CFCalendarUnit)unit
-                           forDate:(CFAbsoluteTime)at
-                           startDate:(CFAbsoluteTime*)startp
-                           interval:(CFTimeInterval*)tip;
+                                 :(CFAbsoluteTime)at
+                                 :(CFAbsoluteTime*)startp
+                                 :(CFTimeInterval*)tip;
 {
   /* CFCalendarUnit and NSCalendarUnit are compatible */
   /* CFTimeInterval and NSTimeInterval are compatible */
@@ -386,5 +410,65 @@ static void NSCalendarUnitToCF(NSUInteger flags, char* descriptionString)
 
   return rv;
 }
+
+- (Boolean) _cfGetComponentDifference:(CFAbsoluteTime)startAT
+                                     :(CFAbsoluteTime)resultAT
+                                     :(CFOptionFlags)options
+                                     :(const char*)componentDesc
+                                     :(int*)components
+{
+  // TODO
+}
+
+- (NSRange) _cfGetRangeOfUnit:(NSCalendarUnit)smaller
+                             :(NSCalendarUnit)larger
+                             :(CFAbsoluteTime)date
+{
+  NSDate* forDate;
+
+  forDate = [NSDate dateWithTimeIntervalSince1970: date
+    + kCFAbsoluteTimeIntervalSince1970];
+
+  return [self rangeOfUnit: smaller
+                    inUnit: larger
+                   forDate: forDate];
+}
+
+- (NSUInteger) _cfGetOrdinalityOfUnit:(NSCalendarUnit)smaller
+                                     :(NSCalendarUnit)larger
+                                     :(CFAbsoluteTime)date
+{
+  NSDate* forDate;
+
+  forDate = [NSDate dateWithTimeIntervalSince1970: date
+    + kCFAbsoluteTimeIntervalSince1970];
+
+  return [self ordinalityOfUnit: smaller
+                         inUnit: larger
+                        forDate: forDate];
+}
+
+- (Boolean) _cfDecomposeAbsoluteTime:(CFAbsoluteTime)at
+                                    :(const char*)componentDesc
+                                    :(int**) components
+{
+  // TODO
+}
+
+- (Boolean) _cfComposeAbsoluteTime:(CFAbsoluteTime*)at
+                                    :(const char*)componentDesc
+                                    :(int*) components
+{
+ // TODO
+}
+
+- (Boolean) _cfAddComponents:(CFAbsoluteTime*)at
+                            :(NSUInteger)opts
+                            :(const char*)componentDesc
+                            :(int*) components
+{
+ // TODO
+}
+
 @end
 

@@ -499,6 +499,9 @@ Boolean
 __CFCalendarAddComponentsV (CFCalendarRef cal, CFAbsoluteTime *at,
   CFOptionFlags options, const char *componentDesc, int* buffer)
 {
+  CF_OBJC_FUNCDISPATCH4(_kCFCalendarTypeID, Boolean, cal,
+    "_cfAddComponents::::", at, options, componentDesc, buffer);
+
   int value, index = 0;
   UCalendarDateFields field;
   UErrorCode err = U_ZERO_ERROR;
@@ -534,7 +537,6 @@ Boolean
 CFCalendarAddComponents (CFCalendarRef cal, CFAbsoluteTime *at,
   CFOptionFlags options, const char *componentDesc, ...)
 {
-  // FIXME: dispatch to ObjC
   const int count = strlen(componentDesc);
   int i;
   int *buffer;
@@ -562,6 +564,9 @@ Boolean
 __CFCalendarComposeAbsoluteTimeV (CFCalendarRef cal, CFAbsoluteTime *at,
   const char *componentDesc, int* buffer)
 {
+  CF_OBJC_FUNCDISPATCH3(_kCFCalendarTypeID, Boolean, cal,
+    "_cfComposeAbsoluteTime:::", at, componentDesc, buffer);
+
   int value;
   UCalendarDateFields field;
   UErrorCode err = U_ZERO_ERROR;
@@ -591,7 +596,6 @@ Boolean
 CFCalendarComposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime* at,
   const char *componentDesc, ...)
 {
-  // FIXME: dispatch to ObjC
   const int count = strlen(componentDesc);
   int i;
   int *buffer;
@@ -618,6 +622,9 @@ Boolean
 __CFCalendarDecomposeAbsoluteTimeV (CFCalendarRef cal, CFAbsoluteTime at,
   const char *componentDesc, int** buffer)
 {
+  CF_OBJC_FUNCDISPATCH3(_kCFCalendarTypeID, Boolean, cal,
+    "_cfDecomposeAbsoluteTime:::", at, componentDesc, buffer);
+
   int *value;
   int index = 0;
   UCalendarDateFields field;
@@ -650,7 +657,6 @@ Boolean
 CFCalendarDecomposeAbsoluteTime (CFCalendarRef cal, CFAbsoluteTime at,
   const char *componentDesc, ...)
 {
-  // FIXME: dispatch to ObjC
   const int count = strlen(componentDesc);
   int i;
   int **buffer;
@@ -679,6 +685,9 @@ __CFCalendarGetComponentDifferenceV (CFCalendarRef cal, CFAbsoluteTime startAT,
   CFAbsoluteTime resultAT, CFOptionFlags options,
   const char *componentDesc, int** buffer)
 {
+  CF_OBJC_FUNCDISPATCH5(_kCFCalendarTypeID, Boolean, cal,
+    "_cfGetComponentDifference:::::", startAT, resultAT, options, componentDesc, buffer);
+
   /* FIXME: ICU 4.8 introduced ucal_getFieldDifference() which
      should make implementing this function very easy. */
   int *value;
@@ -793,7 +802,6 @@ CFCalendarGetComponentDifference (CFCalendarRef cal, CFAbsoluteTime startAT,
   CFAbsoluteTime resultAT, CFOptionFlags options,
   const char *componentDesc, ...)
 {
-  // FIXME: dispatch to ObjC
   const int count = strlen(componentDesc);
   int i;
   int **buffer;
@@ -821,7 +829,7 @@ CFCalendarGetTimeRangeOfUnit (CFCalendarRef cal, CFCalendarUnit unit,
   CFAbsoluteTime at, CFAbsoluteTime *startp, CFTimeInterval *tip)
 {
   CF_OBJC_FUNCDISPATCH4(_kCFCalendarTypeID, Boolean, cal,
-    "_cfGetTimeRangeOfUnit:forDate:startDate:interval:", unit, at, startp, tip);
+    "_cfGetTimeRangeOfUnit::::", unit, at, startp, tip);
  
   double start;
   double end;
@@ -886,6 +894,8 @@ CFRange
 CFCalendarGetRangeOfUnit (CFCalendarRef cal, CFCalendarUnit smallerUnit,
   CFCalendarUnit biggerUnit, CFAbsoluteTime at)
 {
+  CF_OBJC_FUNCDISPATCH3(_kCFCalendarTypeID, CFRange, cal,
+    "_cfGetRangeOfUnit:::", smallerUnit, biggerUnit, at);
   return CFRangeMake (kCFNotFound, kCFNotFound);
 }
 
@@ -893,6 +903,8 @@ CFIndex
 CFCalendarGetOrdinalityOfUnit (CFCalendarRef cal, CFCalendarUnit smallerUnit,
   CFCalendarUnit biggerUnit, CFAbsoluteTime at)
 {
+  CF_OBJC_FUNCDISPATCH3(_kCFCalendarTypeID, CFIndex, cal,
+    "_cfGetOrdinalityOfUnit:::", smallerUnit, biggerUnit, at);
   return kCFNotFound;
 }
 
