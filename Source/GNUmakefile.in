@@ -96,7 +96,8 @@ libgnustep-corebase_OBJC_FILES = \
   NSCFLocale.m \
   NSCFCalendar.m \
   NSCFSet.m \
-  NSCFTimeZone.m
+  NSCFTimeZone.m \
+  NSCFDictionary.m
 
 libgnustep-corebase_LIBRARIES_DEPEND_UPON += @LIBS@
 libgnustep-corebase_HEADER_FILES_DIR = ../Headers/CoreFoundation

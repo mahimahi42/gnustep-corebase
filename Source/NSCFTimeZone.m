@@ -65,7 +65,7 @@ NSCFTYPE_VARS
     }
   else
     {
-      self (NSCFTimeZone*) CFTimeZoneCreateWithName(NULL,
+      self = (NSCFTimeZone*) CFTimeZoneCreateWithName(NULL,
         (CFStringRef) tzName, YES);
     }
   
@@ -148,7 +148,6 @@ NSCFTYPE_VARS
   
   return CFTimeZoneGetDaylightSavingTimeOffset((CFTimeZoneRef) self, at);
 }
-
 @end
 
 @implementation NSTimeZone (CoreBaseAdditions)
