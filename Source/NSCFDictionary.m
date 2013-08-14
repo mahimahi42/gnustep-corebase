@@ -25,11 +25,12 @@
 */
 
 #import <Foundation/NSDictionary.h>
+#import <Foundation/NSArray.h>
 
 #include "NSCFType.h"
 #include "CoreFoundation/CFDictionary.h"
 
-@interface NSCFSet : NSMutableDictionary
+@interface NSCFDictionary : NSMutableDictionary
 NSCFTYPE_VARS
 @end
 
@@ -64,9 +65,9 @@ NSCFTYPE_VARS
 {
   RELEASE(self);
   
-  self = (NSCFDictionary*) CFDictionaryCreate(kCFAllocatorDefault, keys,
-    objects, count, &kCFTypeDictionaryKeyCallBacks,
-    &kCFTypeDictionaryValueCallBacks);
+  self = (NSCFDictionary*) CFDictionaryCreate(kCFAllocatorDefault,
+    (const void **) keys, (const void **) objects, count,
+    &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
   
   return self;
 }
@@ -144,17 +145,17 @@ NSCFTYPE_VARS
 
 - (void) setObject: anObject forKey: (id)aKey
 {
-  CFDictionarySetValue((CFDictionaryRef) self, aKey, anObject);
+  CFDictionarySetValue((CFMutableDictionaryRef) self, aKey, anObject);
 }
 
 - (void) removeObjectForKey: (id)aKey
 {
-  CFDictionaryRemoveValue((CFDictionaryRef) self, aKey);
+  CFDictionaryRemoveValue((CFMutableDictionaryRef) self, aKey);
 }
 
 - (void) removeAllObjects
 {
-  CFDictionaryRemoveAllValues((CFDictionaryRef) self);
+  CFDictionaryRemoveAllValues((CFMutableDictionaryRef) self);
 }
 @end
 

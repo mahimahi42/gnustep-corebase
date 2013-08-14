@@ -35,7 +35,9 @@
 #include "CoreFoundation/CFURL.h"
 #include "CoreFoundation/CFURLAccess.h"
 #include "CoreFoundation/CFRuntime.h"
+
 #include "GSPrivate.h"
+#include "GSObjCRuntime.h"
 #include "tzfile.h"
 
 #include <stdio.h>
@@ -345,14 +347,14 @@ CFTimeZoneCreateWithName (CFAllocatorRef alloc, CFStringRef name,
 CFStringRef
 CFTimeZoneGetName (CFTimeZoneRef tz)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFTimeZoneTypeID, CFStringRef, tz, "name");
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFStringRef, tz, "name");
   return tz->_name;
 }
 
 CFDataRef
 CFTimeZoneGetData (CFTimeZoneRef tz)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFTimeZoneTypeID, CFDataRef, tz, "data");
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFDataRef, tz, "data");
   return tz->_data;
 }
 
@@ -370,7 +372,7 @@ CFTimeZoneComparator (const void *v1, const void *v2, void *ctxt)
 CFStringRef
 CFTimeZoneCopyAbbreviation (CFTimeZoneRef tz, CFAbsoluteTime at)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFTimeZoneTypeID, CFStringRef, tz,
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFStringRef, tz,
     "_cfCopyAbbreviation:", at);
   
   TransInfo tmp;
@@ -386,7 +388,7 @@ CFTimeZoneCopyAbbreviation (CFTimeZoneRef tz, CFAbsoluteTime at)
 CFTimeInterval
 CFTimeZoneGetDaylightSavingTimeOffset (CFTimeZoneRef tz, CFAbsoluteTime at)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFTimeZoneTypeID, CFTimeInterval, tz,
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFTimeInterval, tz,
     "_cfGetDaylightSavingTimeOffset:", at);
   
   TransInfo tmp;
@@ -416,7 +418,7 @@ CFTimeZoneGetDaylightSavingTimeOffset (CFTimeZoneRef tz, CFAbsoluteTime at)
 Boolean
 CFTimeZoneIsDaylightSavingTime (CFTimeZoneRef tz, CFAbsoluteTime at)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFTimeZoneTypeID, Boolean, tz,
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, Boolean, tz,
     "_cfIsDaylightSavingTime:", at);
   
   TransInfo tmp;
@@ -432,7 +434,7 @@ CFTimeZoneIsDaylightSavingTime (CFTimeZoneRef tz, CFAbsoluteTime at)
 CFTimeInterval
 CFTimeZoneGetSecondsFromGMT (CFTimeZoneRef tz, CFAbsoluteTime at)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFTimeZoneTypeID, CFTimeInterval, tz,
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFTimeInterval, tz,
     "_cfGetSecondsFromGMT:", at);
   
   TransInfo tmp;
@@ -449,7 +451,7 @@ CFAbsoluteTime
 CFTimeZoneGetNextDaylightSavingTimeTransition (CFTimeZoneRef tz,
   CFAbsoluteTime at)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFTimeZoneTypeID, CFAbsoluteTime, tz,
+  CF_OBJC_FUNCDISPATCHV(_kCFTimeZoneTypeID, CFAbsoluteTime, tz,
     "_cfGetNextDaylightSavingTimeTransition:", at);
   
   TransInfo tmp;

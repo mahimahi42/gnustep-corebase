@@ -30,7 +30,9 @@
 #include "CoreFoundation/CFString.h"
 #include "CoreFoundation/CFRuntime.h"
 #include "CoreFoundation/CFLocale.h"
+
 #include "GSPrivate.h"
+#include "GSObjCRuntime.h"
 
 #include <string.h>
 #include <unicode/uloc.h>
@@ -661,7 +663,7 @@ CFLocaleCopyDisplayNameForPropertyValue (CFLocaleRef displayLocale,
                                          CFStringRef key,
                                          CFStringRef value)
 {
-  CF_OBJC_FUNCDISPATCH2(_kCFLocaleTypeID, CFTypeRef, displayLocale,
+  CF_OBJC_FUNCDISPATCHV(_kCFLocaleTypeID, CFTypeRef, displayLocale,
     "displayNameForKey:value:", CFLocaleKeyToNSLocaleKey(key), value);
 
   CFStringRef ident;
@@ -748,7 +750,7 @@ CFTypeRef
 CFLocaleGetValue (CFLocaleRef locale,
                   CFStringRef key)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFLocaleTypeID, CFTypeRef, locale,
+  CF_OBJC_FUNCDISPATCHV(_kCFLocaleTypeID, CFTypeRef, locale,
     "objectForKey:", CFLocaleKeyToNSLocaleKey(key));
 
   CFTypeRef result = NULL;
@@ -801,7 +803,7 @@ CFLocaleGetValue (CFLocaleRef locale,
 CFStringRef
 CFLocaleGetIdentifier (CFLocaleRef locale)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFLocaleTypeID, CFStringRef, locale,
+  CF_OBJC_FUNCDISPATCHV(_kCFLocaleTypeID, CFStringRef, locale,
     "localeIdentifier"); 
   return locale->_identifier;
 }

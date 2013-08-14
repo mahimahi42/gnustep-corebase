@@ -10,7 +10,7 @@ AC_CONFIG_HEADERS([Source/config.h])
 AC_PROG_CC
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h float.h limits.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h float.h limits.h math.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -33,7 +33,8 @@ AC_CHECK_SIZEOF([void *])
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([floor getcwd gettimeofday memmove memset mkdir modf pow rmdir strncasecmp])
+AC_CHECK_LIB(m, pow)
+AC_CHECK_FUNCS([floor getcwd gettimeofday memmove memset mkdir modf rmdir strncasecmp])
 
 #---
 # Check for the Objective-C runtime
@@ -91,7 +92,7 @@ ICU_MIN_VERSION='4.0'
     AC_MSG_ERROR([Could not find ICU $ICU_MIN_VERSION or later])
   fi
   
-  AC_CHECK_HEADERS([unicode/uloc.h unicode/ulocdata.h unicode/ucol.h unicode/ucurr.h unicode/ucal.h unicode/unum.h unicode/udat.h unicode/udatpg.h unicode/usearch.h])
+  AC_CHECK_HEADERS([unicode/ucal.h unicode/uchar.h unicode/ucnv.h unicode/ucol.h unicode/ucurr.h unicode/udat.h unicode/udatpg.h unicode/uloc.h unicode/ulocdata.h unicode/unorm.h unicode/unum.h unicode/usearch.h unicode/ustring.h unicode/utrans.h])
   AC_DEFINE(HAVE_ICU, 1,
             [Define to 1 if you have International Components for Unicode.])
 #fi

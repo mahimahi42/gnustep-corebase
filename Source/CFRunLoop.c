@@ -29,7 +29,9 @@
 #include "CoreFoundation/CFArray.h"
 #include "CoreFoundation/CFDictionary.h"
 #include "CoreFoundation/CFSet.h"
+
 #include "GSPrivate.h"
+#include "GSObjCRuntime.h"
 
 /* From NSDate.m in GNUstep-base */
 #define DISTANT_FUTURE	63113990400.0
@@ -441,6 +443,7 @@ struct common_mode_info
 {
   CFRunLoopRef rl;
   CFTypeRef obj;
+  Boolean ret;
 };
 
 /* Call the _nolock variant of the Add, Remove and Contain functions
@@ -451,14 +454,12 @@ CFRunLoopAddSource_nolock (CFRunLoopRef rl, CFRunLoopSourceRef source,
                            CFStringRef mode)
 {
   GSRunLoopContextRef ctxt;
-  CFMutableSetRef sources;
   
   ctxt = GSRunLoopContextGet (rl, mode);
   if (source->_context.version == 0)
-    sources = ctxt->sources0;
+    CFSetAddValue (ctxt->sources0, source);
   else if (source->_context.version == 1)
-    sources = ctxt->sources1;
-  CFSetAddValue (sources, source);
+    CFSetAddValue (ctxt->sources1, source);
 }
 
 static void
@@ -592,7 +593,7 @@ CFRunLoopCommonModesAddFunc (const void *value, void *context)
 static void
 CFRunLoopCommonModesAdd (CFRunLoopRef rl, CFTypeRef obj)
 {
-  struct common_mode_info info = { rl, obj };
+  struct common_mode_info info = { rl, obj, false };
   CFSetApplyFunction (rl->_commonModes, CFRunLoopCommonModesAddFunc, &info);
   CFArrayAppendValue (rl->_commonObjects, obj);
 }
@@ -600,36 +601,40 @@ CFRunLoopCommonModesAdd (CFRunLoopRef rl, CFTypeRef obj)
 static void
 CFRunLoopCommonModesContainFunc (const void *value, void *context)
 {
+  Boolean ret = false;
   struct common_mode_info *info = (struct common_mode_info*)context;
   CFTypeID typeID = CFGetTypeID (info->obj);
   if (typeID == _kCFRunLoopSourceTypeID)
-    CFRunLoopContainsSource_nolock (info->rl, (CFRunLoopSourceRef)info->obj,
-                                    (CFStringRef)value);
+    ret = CFRunLoopContainsSource_nolock (info->rl, (CFRunLoopSourceRef)info->obj,
+                                          (CFStringRef)value);
   else if (typeID == _kCFRunLoopObserverTypeID)
-    CFRunLoopContainsObserver_nolock (info->rl, (CFRunLoopObserverRef)info->obj,
-                                      (CFStringRef)value);
+    ret = CFRunLoopContainsObserver_nolock (info->rl, (CFRunLoopObserverRef)info->obj,
+                                            (CFStringRef)value);
   else if (typeID == _kCFRunLoopTimerTypeID)
-    CFRunLoopContainsTimer_nolock (info->rl, (CFRunLoopTimerRef)info->obj,
-                                   (CFStringRef)value);
+    ret = CFRunLoopContainsTimer_nolock (info->rl, (CFRunLoopTimerRef)info->obj,
+                                         (CFStringRef)value);
+
+  if (ret)
+    {
+      info->ret = ret;
+    }
 }
 
 static Boolean
 CFRunLoopCommonModesContain (CFRunLoopRef rl, CFTypeRef obj)
 {
-  Boolean ret;
   CFRange range = CFRangeMake (0, CFArrayGetCount (rl->_commonObjects));
   if (CFArrayContainsValue (rl->_commonObjects, range, obj))
     {
-      ret = true;
+      return true;
     }
   else
     {
-      struct common_mode_info info = { rl, obj };
+      struct common_mode_info info = { rl, obj, false };
       CFSetApplyFunction (rl->_commonModes, CFRunLoopCommonModesContainFunc,
                           &info);
+      return info.ret;
     }
-  
-  return false;
 }
 
 static void
@@ -653,7 +658,7 @@ CFRunLoopCommonModesRemove (CFRunLoopRef rl, CFTypeRef obj)
 {
   CFRange range;
   CFIndex idx;
-  struct common_mode_info info = { rl, obj };
+  struct common_mode_info info = { rl, obj, false };
   range = CFRangeMake (0, CFArrayGetCount (rl->_commonObjects));
   idx = CFArrayContainsValue (rl->_commonObjects, range, obj);
   if (idx != kCFNotFound)
@@ -976,7 +981,7 @@ Boolean
 CFRunLoopTimerDoesRepeat (CFRunLoopTimerRef timer)
 {
   /* FIXME: need this method in NSTimer. */
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, Boolean, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, Boolean, timer,
                         "_cfDoesRepeat");
   
   return (timer->_interval > 0.0);
@@ -987,7 +992,7 @@ CFRunLoopTimerGetContext (CFRunLoopTimerRef timer,
                           CFRunLoopTimerContext *context)
 {
   /* FIXME: need this method in NSTimer. */
-  CF_OBJC_FUNCDISPATCH1(_kCFRunLoopTimerTypeID, void, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, void, timer,
                         "_cfContext:", context);
   
   *context = timer->_context;
@@ -996,7 +1001,7 @@ CFRunLoopTimerGetContext (CFRunLoopTimerRef timer,
 CFTimeInterval
 CFRunLoopTimerGetInterval (CFRunLoopTimerRef timer)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, CFTimeInterval, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, CFTimeInterval, timer,
                         "timeInterval");
   
   return timer->_interval;
@@ -1006,7 +1011,7 @@ CFAbsoluteTime
 CFRunLoopTimerGetNextFireDate (CFRunLoopTimerRef timer)
 {
   /* FIXME: need this method in NSTimer. */
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, CFAbsoluteTime, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, CFAbsoluteTime, timer,
                         "_cfFireDate");
   
   return timer->_nextFireDate;
@@ -1016,7 +1021,7 @@ CFIndex
 CFRunLoopTimerGetOrder (CFRunLoopTimerRef timer)
 {
   /* FIXME: need this method in NSTimer. */
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, CFIndex, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, CFIndex, timer,
                         "_cfOrder");
   
   return timer->_order;
@@ -1025,7 +1030,7 @@ CFRunLoopTimerGetOrder (CFRunLoopTimerRef timer)
 void
 CFRunLoopTimerInvalidate (CFRunLoopTimerRef timer)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, void, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, void, timer,
                         "invalidate");
   
   
@@ -1034,7 +1039,7 @@ CFRunLoopTimerInvalidate (CFRunLoopTimerRef timer)
 Boolean
 CFRunLoopTimerIsValid (CFRunLoopTimerRef timer)
 {
-  CF_OBJC_FUNCDISPATCH0(_kCFRunLoopTimerTypeID, Boolean, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, Boolean, timer,
                         "isValid");
   
   return timer->_isValid;
@@ -1045,7 +1050,7 @@ CFRunLoopTimerSetNextFireDate (CFRunLoopTimerRef timer,
                                CFAbsoluteTime fireDate)
 {
   /* FIXME: need this method in NSTimer. */
-  CF_OBJC_FUNCDISPATCH1(_kCFRunLoopTimerTypeID, void, timer,
+  CF_OBJC_FUNCDISPATCHV(_kCFRunLoopTimerTypeID, void, timer,
                         "_cfSetNextFireDate:", fireDate);
   
   return;

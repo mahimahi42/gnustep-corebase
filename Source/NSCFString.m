@@ -229,17 +229,6 @@ static NSStringEncoding *nsencodings = NULL;
   return NSMakeRange (ret.location, ret.length);
 }
 
-- (NSRange) rangeOfString: (NSString*) aString
-                  options: (NSUInteger) mask
-                    range: (NSRange) aRange
-{
-  // FIXME: Override this method because NSString doesn't do it right.
-  return [self rangeOfString: aString
-                     options: mask
-                       range: aRange
-                      locale: nil];
-}
-
 - (NSRange) rangeOfString: (NSString *) aString
                   options: (NSStringCompareOptions) mask
                     range: (NSRange) searchRange
@@ -256,11 +245,15 @@ static NSStringEncoding *nsencodings = NULL;
   return NSMakeRange (ret.location, ret.length);
 }
 
-- (NSRange) rangeOfComposedCharacterSequenceAtIndex: (NSUInteger) anIndex
+/*
+- (NSArray *) componentsSeparatedByCharactersInSet: (NSCharacterSet *)separator
 {
-  CFRange cfRange =
-    CFStringGetRangeOfComposedCharactersAtIndex (self, anIndex);
-  return NSMakeRange (cfRange.location, cfRange.length);
+  return nil; // FIXME
+}
+
+- (NSRange) rangeOfComposedCharacterSequencesForRange: (NSRange)range
+{
+  return NSMakeRange (NSNotFound, 0); // FIXME, even NSString doesn't implement this
 }
 
 - (NSDictionary*) propertyListFromStringsFileFormat
@@ -268,14 +261,7 @@ static NSStringEncoding *nsencodings = NULL;
   // FIXME ???
   return nil;
 }
-
-- (NSComparisonResult) compare: (NSString*) aString
-                       options: (NSUInteger) mask
-                         range: (NSRange) aRange
-{
-  // FIXME: Another instance of NSString doing it wrong....
-  return [self compare: aString options: mask range: aRange locale: nil];
-}
+*/
 
 - (NSComparisonResult) compare: (NSString*) string 
                        options: (NSUInteger) mask 
@@ -283,10 +269,10 @@ static NSStringEncoding *nsencodings = NULL;
                         locale: (id) locale
 {
   CFRange cfRange = CFRangeMake (compareRange.location, compareRange.length);
-  if ([locale isKindOfClass: [NSDictionary class]])
+  if (nil != locale
+      && ![locale isKindOfClass: [NSLocale class]])
     {
-      return [super compare: string options: mask range: compareRange
-        locale: locale];
+      locale = [NSLocale currentLocale];
     }
   return (NSComparisonResult)CFStringCompareWithOptionsAndLocale (self,
      string, cfRange, (CFStringCompareFlags)mask,
@@ -389,8 +375,8 @@ static NSStringEncoding *nsencodings = NULL;
     const CFStringEncoding* encodings;
     NSStringEncoding* converted;
     
-    
-encodings = CFStringGetListOfAvailableEncodings();
+    encodings = CFStringGetListOfAvailableEncodings();
+
     for (i = 0; encodings[i] != 0; i++)
       count++;
     

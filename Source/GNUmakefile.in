@@ -6,9 +6,9 @@ PACKAGE_NAME = gnustep-corebase
 LIBRARY_NAME = libgnustep-corebase
 
 ADDITIONAL_INCLUDE_DIRS = -I../Headers
-ADDITIONAL_CFLAGS = -DBUILDING_SELF -DMAC_OS_X_VERSION_MAX_ALLOWED=100700
-ADDITIONAL_CXXFLAGS = -DBUILDING_SELF -DMAC_OS_X_VERSION_MAX_ALLOWED=100700
-ADDITIONAL_OBJCFLAGS = -DBUILDING_SELF -DMAC_OS_X_VERSION_MAX_ALLOWED=100700
+ADDITIONAL_CFLAGS = -DBUILDING_SELF
+ADDITIONAL_CXXFLAGS = -DBUILDING_SELF
+ADDITIONAL_OBJCFLAGS = -DBUILDING_SELF
 
 libgnustep-corebase_INTERFACE_VERSION = $(MAJOR_VERSION)
 
@@ -46,8 +46,10 @@ libgnustep-corebase_C_FILES = \
   CFUUID.c \
   CFXMLNode.c \
   CFXMLParser.c \
+  GSCArray.c \
   GSFunctions.c \
-  GSHashTable.c
+  GSHashTable.c \
+  GSUnicode.c
 
 libgnustep-corebase_HEADER_FILES = \
   CoreFoundation.h \
@@ -91,13 +93,11 @@ libgnustep-corebase_OBJC_FILES = \
   NSCFData.m \
   NSCFError.m \
   NSCFString.m \
-  NSCFType.m \
-  NSCFNumber.m \
-  NSCFLocale.m \
-  NSCFCalendar.m \
   NSCFSet.m \
+  NSCFLocale.m \
+  NSCFDictionary.m \
   NSCFTimeZone.m \
-  NSCFDictionary.m
+  NSCFType.m
 
 libgnustep-corebase_LIBRARIES_DEPEND_UPON += @LIBS@
 libgnustep-corebase_HEADER_FILES_DIR = ../Headers/CoreFoundation

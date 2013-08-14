@@ -25,6 +25,7 @@
 */
 
 #import <Foundation/NSArray.h>
+#include <stdarg.h>
 
 #include "NSCFType.h"
 #include "CoreFoundation/CFArray.h"
@@ -48,13 +49,32 @@ NSCFTYPE_VARS
   GSObjCAddClassBehavior (self, [NSCFType class]);
 }
 
-- (id) initWithObjects: (const id[])objects count: (NSUInteger)count
+- (id) initWithObjects:(id)firstObj, ...
 {
   RELEASE(self);
-  
-  self = (NSCFArray*) CFArrayCreate(kCFAllocatorDefault, (const void**) &objects,
-    count, &kCFTypeArrayCallBacks);
-  
+
+  if (firstObj == nil)
+    {
+      return (NSCFArray*) CFArrayCreate(NULL, NULL, 0, &kCFTypeArrayCallBacks);
+    }
+
+  /* copy all arguments into a temporary mutable array */
+  CFMutableArrayRef temp = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+  va_list ap;
+  id obj;
+
+  va_start(ap, firstObj);
+
+  CFArrayAppendValue(temp, firstObj);
+
+  while ((obj = va_arg(ap, id)) != nil)
+	CFArrayAppendValue(temp, obj);
+
+  va_end(ap);
+
+  self = (NSCFArray*) CFArrayCreateCopy(NULL, temp);
+  RELEASE(temp);
+
   return self;
 }
 
@@ -87,22 +107,9 @@ NSCFTYPE_VARS
 {
   CFArrayRemoveValueAtIndex (self, (CFIndex)index);
 }
-
-// NSMutableArray
-
-- (id)initWithCapacity:(NSUInteger)numItems
-{
-  RELEASE(self);
-  
-  self = (NSCFArray*) CFArrayCreateMutable(kCFAllocatorDefault,
-    numItems, &kCFTypeArrayCallBacks);
-  
-  return self;
-}
-
 @end
 
-@implementation NSArray (NSArray_CFBridge)
+@implementation NSArray (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID
 {
   return CFArrayGetTypeID();

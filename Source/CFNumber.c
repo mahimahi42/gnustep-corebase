@@ -29,9 +29,23 @@
 #include "CoreFoundation/CFString.h"
 #include "CoreFoundation/CFNumberFormatter.h"
 #include "CoreFoundation/CFNumber.h"
+
 #include "GSPrivate.h"
+#include "GSObjCRuntime.h"
 
 #include <string.h>
+#include <math.h>
+
+#ifndef INFINITY
+# if defined(_MSC_VER)
+#  include <float.h>
+#  define INFINITY DBL_MAX + DBL_MAX
+#  define NAN (INFINITY) - (INFINITY)
+# else
+#  define INFINITY 1.0 / 0.0
+#  define NAN 0.0 / 0.0
+# endif
+#endif
 
 struct __CFBoolean
 {
@@ -102,15 +116,6 @@ struct __CFNumber
 {
   CFRuntimeBase _parent;
 };
-
-#if defined(_MSC_VER)
-#include <float.h>
-#define INFINITY DBL_MAX + DBL_MAX
-#define NAN (INFINITY) - (INFINITY)
-#else
-#define INFINITY 1.0 / 0.0
-#define NAN 0.0 / 0.0
-#endif
 
 struct __CFNumber_static
 {
@@ -303,9 +308,9 @@ CFComparisonResult
 CFNumberCompare (CFNumberRef num, CFNumberRef oNum,
   void *context)
 {
-  CF_OBJC_FUNCDISPATCH1(_kCFNumberTypeID, CFComparisonResult, num,
+  CF_OBJC_FUNCDISPATCHV(_kCFNumberTypeID, CFComparisonResult, num,
     "compare:", oNum);
-  CF_OBJC_FUNCDISPATCH1(_kCFNumberTypeID, CFComparisonResult, oNum,
+  CF_OBJC_FUNCDISPATCHV(_kCFNumberTypeID, CFComparisonResult, oNum,
     "compare:", num);
   
   return -1;
@@ -345,7 +350,7 @@ CFNumberCreate (CFAllocatorRef alloc, CFNumberType type,
     }
   bestType = CFNumberBestType (type);
   byteSize = CFNumberByteSizeOfType(bestType);
-  
+
   size = sizeof(struct __CFNumber) - sizeof(CFRuntimeBase) + byteSize;
   new = (struct __CFNumber*)_CFRuntimeCreateInstance (alloc, _kCFNumberTypeID,
     size, 0);

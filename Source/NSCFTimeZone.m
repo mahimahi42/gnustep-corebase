@@ -25,9 +25,11 @@
 */
 
 #import <Foundation/NSTimeZone.h>
+#import <Foundation/NSString.h>
 
 #include "NSCFType.h"
 #include "CoreFoundation/CFTimeZone.h"
+
 
 @interface NSCFTimeZone : NSTimeZone
 NSCFTYPE_VARS
@@ -42,6 +44,8 @@ NSCFTYPE_VARS
 - (NSTimeInterval) _cfGetSecondsFromGMT: (CFAbsoluteTime)at;
 - (CFAbsoluteTime) _cfGetNextDaylightSavingTimeTransition: (CFAbsoluteTime)at;
 @end
+
+//#if 0
 
 @implementation NSCFTimeZone
 + (void) load
@@ -149,6 +153,7 @@ NSCFTYPE_VARS
   return CFTimeZoneGetDaylightSavingTimeOffset((CFTimeZoneRef) self, at);
 }
 @end
+//#endif
 
 @implementation NSTimeZone (CoreBaseAdditions)
 - (CFTypeID) _cfTypeID
@@ -197,7 +202,7 @@ NSCFTYPE_VARS
   date = [NSDate dateWithTimeIntervalSince1970: at
     + kCFAbsoluteTimeIntervalSince1970];
   
-  return [self secondsFromGMTForDate: date];
+  return (NSTimeInterval)  [self secondsFromGMTForDate: date];
 }
 
 - (CFAbsoluteTime) _cfGetNextDaylightSavingTimeTransition: (CFAbsoluteTime)at
@@ -212,4 +217,10 @@ NSCFTYPE_VARS
   return [date timeIntervalSince1970]
     - kCFAbsoluteTimeIntervalSince1970;
 }
+
+- (BOOL)isEqualToTimeZone:(NSTimeZone *)aTimeZone
+{
+  return [[self name] isEqual: [aTimeZone name]];
+}
 @end
+
