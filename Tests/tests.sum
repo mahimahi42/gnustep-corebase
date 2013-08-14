@@ -121,9 +121,9 @@ Completed file:  bridge.m
 Passed test:     bridge.m:24 ... CFLocaleGetIdentifier works
 Passed test:     bridge.m:28 ... CFLocaleGetValue works
 Passed test:     bridge.m:31 ... CFLocaleCopyDisplayNameForPropertyValue works
-Passed test:     bridge.m:40 ... CFLocaleGetIdentifier works
-Passed test:     bridge.m:44 ... CFLocaleGetValue works
-Passed test:     bridge.m:47 ... CFLocaleCopyDisplayNameForPropertyValue works
+Passed test:     bridge.m:50 ... -localeIdentifier works
+Passed test:     bridge.m:52 ... -objectForKey: works
+Passed test:     bridge.m:54 ... -displayNameForKey:value: works
 Completed file:  bridge.m
 
 Passed test:     create.m:11 ... CFLocaleCopyCurrent() returns a value

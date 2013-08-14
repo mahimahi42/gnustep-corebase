@@ -118,10 +118,7 @@ Passed test:     bridge.m:83 ... -setObject:forKey: works on a CFDictionary
 Passed test:     bridge.m:86 ... -objectForKey: works on a CFDictionary
 Completed file:  bridge.m
 
-Passed test:     bridge.m:24 ... CFLocaleGetIdentifier works
-Passed test:     bridge.m:28 ... CFLocaleGetValue works
-Passed test:     bridge.m:31 ... CFLocaleCopyDisplayNameForPropertyValue works
-Completed file:  bridge.m
+Failed build:     
 
 Passed test:     create.m:11 ... CFLocaleCopyCurrent() returns a value
 Passed test:     create.m:15 ... CFLocaleCopyCurrent() returns a value
@@ -422,7 +419,8 @@ Passed test:     create.m:17 ... UUID creates with CFUUIDBytes is correct.
 Passed test:     create.m:21 ... CFUUIDCreateString() returns non-NULL.
 Completed file:  create.m
 
-    329 Passed tests
+    326 Passed tests
       3 Dashed hopes
       1 Failed test
       1 Failed file
+      1 Failed build
