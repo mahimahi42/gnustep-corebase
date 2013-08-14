@@ -42,8 +42,16 @@ int main (void)
   PASS_CF(rls1 != NULL, "First run loop source create.");
   rls2 = CFRunLoopSourceCreate (NULL, 0, &c2);
   PASS_CF(rls2 != NULL, "Second run loop source create.");
-  
+
+  if (rl) {
+    NSLog(@"rl is ok");
+  }
+  if (rls1) {
+    NSLog(@"rls1 is ok");
+  }
+
   CFRunLoopAddSource (rl, rls1, kCFRunLoopDefaultMode);
+  NSLog(@"Herp");
   CFRunLoopAddSource (rl, rls2, kCFRunLoopDefaultMode);
   CFRunLoopAddSource (rl, rls2, CFSTR("another_mode"));
   

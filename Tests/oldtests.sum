@@ -1,0 +1,428 @@
+
+Passed test:     bridge.m:30 ... -count works on a CFArray
+Passed test:     bridge.m:35 ... -addObject: adds a value into a CFArray
+Passed test:     bridge.m:38 ... -objectAtIndex: works on a CFArray (#1)
+Passed test:     bridge.m:40 ... -objectAtIndex: works on a CFArray (#2)
+Passed test:     bridge.m:44 ... -indexOfObject: works on a CFArray
+Passed test:     bridge.m:63 ... CFArrayGetCount() works on an NSArray
+Passed test:     bridge.m:68 ... CFArrayAppendValue() adds a value into an NSArray
+Passed test:     bridge.m:71 ... CFArrayGetValueAtIndex() works on an NSArray (#1)
+Passed test:     bridge.m:73 ... CFArrayGetValueAtIndex() works on an NSArray (#2)
+Passed test:     bridge.m:77 ... CFArrayGetFirstIndexOfValue() works on an NSArray
+Completed file:  bridge.m
+
+Passed test:     create.m:13 ... CFArray created.
+Passed test:     create.m:16 ... CFArray has correct number of values.
+Passed test:     create.m:18 ... Found 1 occurence of the 1.
+Passed test:     create.m:21 ... Found value at index 2.
+Passed test:     create.m:26 ... An array with no values return non-NULL.
+Completed file:  create.m
+
+Passed test:     mutablearray.m:24 ... CFArray created.
+Passed test:     mutablearray.m:27 ... CFMutableArray created.
+Passed test:     mutablearray.m:32 ... CFMutableArray has correct number of values.
+Passed test:     mutablearray.m:37 ... Array sorted correctly.
+Passed test:     mutablearray.m:40 ... Index of number 5 is 4.
+Passed test:     mutablearray.m:43 ... Index of value between values is 5.
+Completed file:  mutablearray.m
+
+Passed test:     general.m:23 ... Attributed string was correctly created.
+Passed test:     general.m:27 ... Attribute range is (0, 17).
+Passed test:     general.m:28 ... Attributes are the same.
+Passed test:     general.m:31 ... Copied attributed string is equal.
+Passed test:     general.m:35 ... Copied attribute range is (0, 17).
+Passed test:     general.m:36 ... Copied attributes are the same.
+Completed file:  general.m
+
+Passed test:     mutable.m:25 ... Mutable attributed string was created.
+Passed test:     mutable.m:29 ... Attribute range is (0, 17).
+Passed test:     mutable.m:30 ... First set of attributes are the same.
+Passed test:     mutable.m:44 ... Attribute range is (5, 10).
+Passed test:     mutable.m:45 ... Second set of attributes are the same.
+Passed test:     mutable.m:48 ... Attribute range is (15, 2).
+Passed test:     mutable.m:49 ... Previous attributes are adjusted.
+Passed test:     mutable.m:60 ... Attribute range is (10, 7).
+Passed test:     mutable.m:61 ... Third set of attributes are the same.
+Completed file:  mutable.m
+
+Passed test:     general.m:17 ... Binary heap was created.
+Passed test:     general.m:22 ... Binary heap has 6 values.
+Passed test:     general.m:24 ... Binary heap has value.
+Passed test:     general.m:27 ... Value 10 appears 2 times in binary heap.
+Passed test:     general.m:31 ... All values are in the binary heap.
+Passed test:     general.m:35 ... Minimum value in binary heap is 5.
+Completed file:  general.m
+
+Passed test:     basic.m:21 ... Absolute time composed.
+Passed test:     basic.m:23 ... Absolute time composed correctly (331779600.000000).
+Passed test:     basic.m:27 ... Absolute time decomposed.
+Passed test:     basic.m:28 ... Year decomposed correctly.
+Passed test:     basic.m:29 ... Month decomosed correctly.
+Passed test:     basic.m:30 ... Hour decomposed correctly.
+Passed test:     basic.m:33 ... Got component difference.
+Passed test:     basic.m:34 ... Seconds difference is 3600
+Passed test:     basic.m:38 ... Got wrapped components difference.
+Passed test:     basic.m:41 ... Component difference is 1 hour(s), 1 minute(s) and 3 second(s)
+Passed test:     basic.m:44 ... Got time range of kCFCalendarUnitWeekday.
+Passed test:     basic.m:45 ... Got start of weekday (331347600.000000).
+Passed test:     basic.m:47 ... Time interval is 1 day(s) long (86400.000000).
+Completed file:  basic.m
+
+Passed test:     create.m:11 ... Calendar created.
+Passed test:     create.m:13 ... Correct calendar identifier.
+Passed test:     create.m:17 ... CFCalendarCopyCurrent returns a calendar
+Passed test:     create.m:21 ... Current calendar locale matches current locale.
+Completed file:  create.m
+
+Passed test:     basic.m:12 ... Letter 'a' is part of character set.
+Passed test:     basic.m:17 ... Character set with all ASCII characters is a superset of a charcter setincluding 'abcABC'.
+Passed test:     basic.m:20 ... Characters set with 'abcABC' is not a superset of a character setincluding all ASCII characters
+Passed test:     basic.m:26 ... Inverted character set does not include letter 'a'.
+Passed test:     basic.m:28 ... Inverted character set includes character 0x00DD.
+Passed test:     basic.m:34 ... Whitespace character set includes ' '.
+Passed test:     basic.m:36 ... Whitespace character set does not includes '5'.
+Completed file:  basic.m
+
+Passed test:     mutable.m:11 ... Letter 'a' is part of mutable character set.
+Passed test:     mutable.m:15 ... Letter 'a' was successfully removed from mutable character set.
+Completed file:  mutable.m
+
+Passed test:     basic.m:14 ... Data created.
+Passed test:     basic.m:21 ... Copy of data is equal to original.
+Completed file:  basic.m
+
+Passed test:     basic.m:10 ... Date created correctly.
+Passed test:     basic.m:14 ... First date is greater than second date.
+Passed test:     basic.m:16 ... First date is one second ahead of second date.
+Completed file:  basic.m
+
+Passed test:     basic.m:21 ... Default format for de_DE locale is EEEE, d. MMMM y HH:mm
+Passed test:     basic.m:25 ... Absolute time can be formatted using full date style.
+Passed test:     basic.m:30 ... Absolute time gotten for 2/1/2003
+Passed test:     basic.m:32 ... Absolute time for Montag, 1. Januar 2011 23:00 is 315612000.000000
+Passed test:     basic.m:40 ... Absolute time can be formatted using no date style.
+Passed test:     basic.m:46 ... Absolute time gotten for 20050403 02:01 vorm.
+Passed test:     basic.m:48 ... Absolute time for 20050403 02:01 vorm. is 134186460.000000
+Completed file:  basic.m
+
+Passed test:     bridge.m:36 ... CFDictionaryGetCount() works on an NSDictionary
+Passed test:     bridge.m:39 ... CFDictionaryGetValue() works on an NSDictionary
+Passed test:     bridge.m:43 ... CFDictionaryAddValue() added a pair into an NSDictionary
+Passed test:     bridge.m:48 ... CFDictionaryGetCountOfKey() works on an NSDictionary (#1)
+Passed test:     bridge.m:50 ... CFDictionaryGetCountOfValue() works on an NSDictionary (#1)
+Passed test:     bridge.m:53 ... CFDictionaryGetCountOfKey() works on an NSDictionary (#2)
+Passed test:     bridge.m:55 ... CFDictionaryGetCountOfValue() works on an NSDictionary (#2)
+Passed test:     bridge.m:74 ... -count works on a CFDictionary
+Passed test:     bridge.m:77 ... -objectForKey: works on a CFDictionary
+Passed test:     bridge.m:83 ... -setObject:forKey: works on a CFDictionary
+Passed test:     bridge.m:86 ... -objectForKey: works on a CFDictionary
+Completed file:  bridge.m
+
+Passed test:     bridge.m:24 ... CFLocaleGetIdentifier works
+Passed test:     bridge.m:28 ... CFLocaleGetValue works
+Passed test:     bridge.m:31 ... CFLocaleCopyDisplayNameForPropertyValue works
+Completed file:  bridge.m
+
+Passed test:     create.m:11 ... CFLocaleCopyCurrent() returns a value
+Passed test:     create.m:15 ... CFLocaleCopyCurrent() returns a value
+Passed test:     create.m:18 ... CFLocaleCreate() returns a value
+Passed test:     create.m:20 ... en_ES_PREEURO is stored as es_ES@currency=ESP
+Passed test:     create.m:22 ... CFLocaleCreateCopy() returns a value
+Completed file:  create.m
+
+Passed test:     displayvalues.m:13 ... Display language is correct
+Passed test:     displayvalues.m:18 ... Display country is correct
+Passed test:     displayvalues.m:25 ... Display calendar identifier is correct
+Passed test:     displayvalues.m:32 ... Display collation identifier is correct
+Passed test:     displayvalues.m:38 ... Display currency code is correct
+Completed file:  displayvalues.m
+
+Passed test:     identifier.m:17 ... Locale identifiers are the same
+Passed test:     identifier.m:23 ... Locale components are the same
+Completed file:  identifier.m
+
+Passed test:     values.m:15 ... 'pt_BR' measurement system is 'Metric'
+Passed test:     values.m:17 ... Decimal separtor is ','
+Passed test:     values.m:19 ... Grouping separator is '.'
+Passed test:     values.m:21 ... Currency symbol is 'R$'
+Passed test:     values.m:23 ... Currency code is 'BRL'
+Passed test:     values.m:27 ... Locale identifier is correct
+Passed test:     values.m:29 ... Language code is 'pt'
+Passed test:     values.m:31 ... Country code is 'BR'
+Passed test:     values.m:33 ... No script code for locale
+Passed test:     values.m:35 ... No variant code for locale
+Passed test:     values.m:37 ... Calendar is 'gregorian'
+Passed test:     values.m:39 ... Returns valid CFCalendar
+Passed test:     values.m:41 ... Collation identifier is 'traditional'
+Passed test:     values.m:43 ... Uses metric system
+Passed test:     values.m:45 ... Collator identifier is NULL
+Passed test:     values.m:49 ... Quotation begin delimiter is correct
+Passed test:     values.m:54 ... Quotation end delimiter is correct
+Passed test:     values.m:59 ... Alternate quotation begin delimiter is correct
+Passed test:     values.m:64 ... Alternate quotation end delimiter is correct
+Completed file:  values.m
+
+Passed test:     general.m:14 ... CFNumberCreate() returns non-NULL
+Passed test:     general.m:16 ... Integer is converted to SInt32(3).
+Passed test:     general.m:20 ... Char is converted to SInt32(3).
+Passed test:     general.m:23 ... Integer converted to SInt8.
+Passed test:     general.m:24 ... SInt32 converted to SInt8 (-5) correctly.
+Passed test:     general.m:27 ... Char converted to SInt32.
+Passed test:     general.m:28 ... SInt8 converted to SInt32 (7)correctly.
+Passed test:     general.m:35 ... Short is converted to SInt32(3).
+Passed test:     general.m:39 ... Float is converted to Float64(6).
+Passed test:     general.m:42 ... Short converted to float.
+Passed test:     general.m:43 ... Short converted to float (6.000000) correctly.
+Passed test:     general.m:47 ... Float converted to short.
+Passed test:     general.m:48 ... Float converted to short (3) correctly.
+Completed file:  general.m
+
+Passed test:     create.m:15 ... CFNumberFormatterCreate() return non-nil
+Passed test:     create.m:18 ... Default no-style format same as cocoa
+Passed test:     create.m:26 ... Default decimal-style format same as cocoa
+Passed test:     create.m:34 ... Default currency-style format same as cocoa
+Passed test:     create.m:43 ... Default percent-style format same as cocoa
+Passed test:     create.m:51 ... Default scientific-style format same as cocoa
+Passed test:     create.m:56 ... CFNumberFormatterCreate() return non-nil for system locale
+Completed file:  create.m
+
+Passed test:     format.m:25 ... SInt8 formatted correctly
+Passed test:     format.m:32 ... SInt8 formatted correctly
+Passed test:     format.m:39 ... SInt16 formatted correctly
+Passed test:     format.m:46 ... SInt32 formatted correctly
+Passed test:     format.m:53 ... SInt64 formatted correctly
+Passed test:     format.m:60 ... Double formatted correctly
+Completed file:  format.m
+
+Passed test:     parse.m:24 ... Got SInt8 value
+Passed test:     parse.m:25 ... SInt8 value is '16'
+Passed test:     parse.m:29 ... Got SInt16 value
+Passed test:     parse.m:30 ... SInt16 value is '300'
+Passed test:     parse.m:36 ... Got SInt32 value
+Passed test:     parse.m:37 ... SInt32 value is '68456'
+Passed test:     parse.m:43 ... Got SInt64 value
+Passed test:     parse.m:44 ... SInt64 value is '315000000'
+Passed test:     parse.m:51 ... Got double value
+Passed test:     parse.m:52 ... Double value is '0.234'
+Passed test:     parse.m:53 ... Parsed complete length
+Completed file:  parse.m
+
+Passed test:     validate.m:29 ... Dictionary with non-CFString keys is not a valid property list.
+Passed test:     validate.m:38 ... Dictionary with CFString keys is a valid property list.
+Passed test:     validate.m:41 ... Dictionary with CFDate and CFNumber values is not a valid OpenStep property list.
+Passed test:     validate.m:47 ... Dictionary with CFData only is a valid OpenStep property list.
+Passed test:     validate.m:56 ... Array with CFType objects is a valid XML property list.
+Passed test:     validate.m:60 ... Property list with recursion is not a valid property list.
+Completed file:  validate.m
+
+Passed test:     source.m:42 ... First run loop source create.
+Passed test:     source.m:44 ... Second run loop source create.
+Failed test:     source.m:35 ... Got main run loop.
+Failed file:     source.m aborted without running all tests!
+
+Passed test:     runtime.m:189 ... Points are equal
+Passed test:     runtime.m:191 ... Points have same hash code.
+Passed test:     runtime.m:193 ... Description is correct.
+Passed test:     runtime.m:195 ... Type ID description is correct.
+Passed test:     runtime.m:199 ... -initWithX:Y: returns non-nil
+Passed test:     runtime.m:200 ... CF object and ObjC object are the same
+Passed test:     runtime.m:202 ... ObjC returns same description as CF object
+Completed file:  runtime.m
+
+Passed test:     create.m:17 ... Unicode and C-string are equal.
+Passed test:     create.m:26 ... Strings were combined successfully.
+Completed file:  create.m
+
+Passed test:     encodings.m:47 ... Maximum size for 4 UTF-16 characters is 8 bytes.
+Passed test:     encodings.m:50 ... Maximum size for 4 UTF-8 characters is 12 bytes.
+Passed test:     encodings.m:53 ... Correctly converts to IANA Char Set.
+Passed test:     encodings.m:62 ... UTF-8 string is equal to UTF-16 string.
+Passed test:     encodings.m:72 ... UTF-16 convesion used the same from buffer.
+Passed test:     encodings.m:74 ... UTF-16 conversion successful.
+Passed test:     encodings.m:76 ... External UTF-16 conversion successful.
+Completed file:  encodings.m
+
+Passed test:     format.m:13 ... Characters are formatted correctly
+Passed test:     format.m:20 ... Integers are formatted correctly
+Passed test:     format.m:27 ... Float/Doubles are formatted correctly
+Passed test:     format.m:34 ... Hexs are formatted correctly
+Passed test:     format.m:41 ... Octals are formatted correctly
+Passed test:     format.m:49 ... Strings are formatted correctly
+Passed test:     format.m:56 ... Objects are formatted correctly
+Completed file:  format.m
+
+Passed test:     general.m:13 ... There are 6 strings on separated string.
+Passed test:     general.m:15 ... Value at index 1 is 'usr'
+Passed test:     general.m:19 ... Combined string is \usr\local\share\GNUstep\
+Passed test:     general.m:24 ... '\' was found.
+Passed test:     general.m:26 ... String has range (10, 1)
+Completed file:  general.m
+
+Passed test:     hash.m:11 ... Identical ASCII and UTF-16 string hashes match
+Completed file:  hash.m
+
+Passed test:     mutablestring.m:13 ... String is replaced correctly.
+Passed test:     mutablestring.m:18 ... Uppercase mapping works.
+Passed test:     mutablestring.m:21 ... Capitalize mapping works.
+Passed test:     mutablestring.m:24 ... Lowercase mapping works
+Passed test:     mutablestring.m:27 ... String is replaced whole.
+Passed test:     mutablestring.m:35 ... String is trimmed correctly.
+Passed test:     mutablestring.m:38 ... String replacement works
+Passed test:     mutablestring.m:46 ... Padding works.
+Passed test:     mutablestring.m:48 ... Truncating works.
+Completed file:  mutablestring.m
+
+Passed test:     normalize.m:24 ... CFStringNormalize works
+Passed test:     normalize.m:31 ... Correct char count
+Passed test:     normalize.m:33 ... CFStringNormalize works on an NSString
+Completed file:  normalize.m
+
+Passed test:     objc_bridge_from_cf.m:35 ... isEqual works #1
+Passed test:     objc_bridge_from_cf.m:36 ... isEqual works #2
+Passed test:     objc_bridge_from_cf.m:37 ... hashes are equal
+Passed test:     objc_bridge_from_cf.m:47 ... CFStringUppercase works
+Passed test:     objc_bridge_from_cf.m:58 ... CFStringTrimWhitespace works
+Passed test:     objc_bridge_from_cf.m:66 ... CFStringGetCStringPtr works on a Foundation object
+Passed test:     objc_bridge_from_cf.m:76 ... CFStringAppendCString works
+Passed test:     objc_bridge_from_cf.m:80 ... CFStringAppendCharacters works
+Passed test:     objc_bridge_from_cf.m:91 ... CFStringPad works
+Completed file:  objc_bridge_from_cf.m
+Dashed hope:     objc_bridge_from_cf.m:108 ... CFStringGetBytes works in simple case
+Dashed hope:     objc_bridge_from_cf.m:112 ... CFStringGetBytes returns correct usedLen
+
+Passed test:     objc_bridge.m:22 ... Constant string has maximum retain count.
+Passed test:     objc_bridge.m:25 ... Release has no effect of constant string.
+Passed test:     objc_bridge.m:30 ... CFStringRef instances accept -retain method calls
+Passed test:     objc_bridge.m:38 ... NSString stringWithString accepts a CFStringRef
+Passed test:     objc_bridge.m:41 ... CFStringCompare accepts an NSString
+Completed file:  objc_bridge.m
+
+Passed test:     basic.m:13 ... CFTimeZone create successfully.
+Passed test:     basic.m:15 ... CFTimeZone has correct name.
+Passed test:     basic.m:18 ... Time zone abbreviations are equal.
+Passed test:     basic.m:21 ... GMT+00:00 offset from GMT is 0
+Passed test:     basic.m:24 ... Next transition for GMT+00:00 is 0
+Completed file:  basic.m
+
+Passed test:     bridge.m:22 ... -name works on a CFTimeZone
+Passed test:     bridge.m:24 ... -secondsFromGMT works on a CFTimeZone
+Passed test:     bridge.m:28 ... -isDaylightSavingTime works on a CFTimeZone
+Passed test:     bridge.m:32 ... -abbreviation works on a CFTimeZone
+Passed test:     bridge.m:47 ... CFTimeZoneGetName() works on an NSTimeZone
+Passed test:     bridge.m:49 ... CFTimeZoneGetSecondsFromGMT works on an NSTimeZone
+Passed test:     bridge.m:53 ... CFTimeZoneIsDaylightSavingTime() works on an NSTimeZone
+Passed test:     bridge.m:57 ... CFTimeZoneCopyAbbreviation() works on an NSTimeZone
+Completed file:  bridge.m
+
+Passed test:     general.m:16 ... Time zone named 'CST' is not found if abbreviations are not searched.
+Passed test:     general.m:19 ... Time zone named 'CST' was found when abbreviations were searched
+Passed test:     general.m:21 ... Time zone name is 'US/Central'
+Passed test:     general.m:27 ... 'Europe/Rome' time zone created.
+Passed test:     general.m:31 ... Offset from GMT at 1000000 seconds from absolute epoch is '3600.000000'
+Passed test:     general.m:33 ... On daylight saving time at 1000000 seconds from absolute epoch.
+Passed test:     general.m:40 ... Standard localized name is correct.
+Passed test:     general.m:45 ... Short standard localized name is correct.
+Passed test:     general.m:52 ... Daylight Saving time offset at 0 second from absolute epoch is '0.000000'.
+Passed test:     general.m:55 ... Next daylight saving transition is at '7174800.000000'.
+Completed file:  general.m
+
+Passed test:     basic.m:27 ... Tree has three children.
+Passed test:     basic.m:28 ... Parent is the original tree object.
+Passed test:     basic.m:29 ... First child is child1.
+Passed test:     basic.m:31 ... Next sibling for child1 is child2.
+Passed test:     basic.m:32 ... Child3 is at index 2
+Completed file:  basic.m
+
+Passed test:     create.m:12 ... URL created.
+Passed test:     create.m:14 ... Absolute URL of an absolute URL are the same.
+Passed test:     create.m:22 ... http://user:password@www.w3.org:5/silly-file-path/ path can be decomposed
+Passed test:     create.m:25 ... Path of http://user:password@www.w3.org:5/silly-file-path/ is /silly-file-path/
+Passed test:     create.m:29 ... User name of http://user:password@www.w3.org:5/silly-file-path/ is user
+Passed test:     create.m:33 ... Password of http://user:password@www.w3.org:5/silly-file-path/ is password
+Passed test:     create.m:37 ... resourceSpecifier of http://www.w3.org/silly-file-path/ is NULL
+Passed test:     create.m:41 ... additional/string path can be decomposed since base URL is decomposable
+Passed test:     create.m:43 ... String is additional/string
+Passed test:     create.m:46 ... Copied path is not resolved against base.
+Passed test:     create.m:59 ... http://www.w3.org/silly-file-name?query#fragment path can be decomposed
+Passed test:     create.m:62 ... Scheme of http://www.w3.org/silly-file-name is http
+Passed test:     create.m:66 ... Host of http://www.w3.org/silly-file-name is www.w3.org
+Passed test:     create.m:70 ... Strict path of http://www.w3.org/silly-file-name is silly-file-name
+Passed test:     create.m:75 ... Resource specifier of http://www.w3.org/silly-file-name?query#fragment is ?query#fragment
+Passed test:     create.m:79 ... Query of http://www.w3.org/silly-file-name?query#fragment is query
+Passed test:     create.m:83 ... Fragment of http://www.w3.org/silly-file-name?query#fragment is fragment
+Passed test:     create.m:92 ... Parameter string for http://www.w3.org/silly;type=test
+Passed test:     create.m:96 ... Resource specifier of http://www.w3.org/silly;type=test is ;test=test.
+Passed test:     create.m:102 ... URL with 'this isn't a URL' returns NULL
+Completed file:  create.m
+Dashed hope:     create.m:50 ... Resource specifier of relative url is NULL
+
+Passed test:     escaping.m:14 ... URL string is escaped correctly.
+Passed test:     escaping.m:20 ... Correct characters escaped.
+Passed test:     escaping.m:23 ... No percent escapes were replaced.
+Passed test:     escaping.m:27 ... Percent escapes replaced correctly.
+Passed test:     escaping.m:35 ... Correct characters escaped.
+Passed test:     escaping.m:38 ... Percent escapes replaced correctly.
+Completed file:  escaping.m
+
+Passed test:     file_system_path.m:12 ... C:\WINDOWS path can be decomposed
+Passed test:     file_system_path.m:14 ... Windows style path of file URL C:\WINDOWS is file://localhost/C:/WINDOWS/
+Passed test:     file_system_path.m:16 ... Resource specifier of C:\WINDOWS is NULL
+Passed test:     file_system_path.m:18 ... File system path is C:\WINDOWS
+Passed test:     file_system_path.m:21 ... Path is /C:/WINDOWS/
+Passed test:     file_system_path.m:24 ... Strict path is C:/WINDOWS/
+Passed test:     file_system_path.m:31 ... /usr path can be decomposed
+Passed test:     file_system_path.m:33 ... String for file URL /usr is /usr/
+Passed test:     file_system_path.m:35 ... Resource Specifier of /usr is NULL
+Passed test:     file_system_path.m:37 ... File system path is /usr
+Passed test:     file_system_path.m:40 ... Path is /usr/
+Passed test:     file_system_path.m:43 ... Strict path is usr/
+Passed test:     file_system_path.m:53 ... local/share path can be decomposed
+Passed test:     file_system_path.m:55 ... String is local/share/
+Passed test:     file_system_path.m:58 ... File system path is not resolved against base
+Passed test:     file_system_path.m:60 ... local/share is a directory path.
+Completed file:  file_system_path.m
+
+Passed test:     ref_resolution.m:19 ... Simple relative URL absoluteString works
+Passed test:     ref_resolution.m:22 ... Simple relative URL path works
+Passed test:     ref_resolution.m:32 ... ../g resolved against http://a is http://a/g
+Passed test:     ref_resolution.m:44 ... g:h resolved against http://a/b/c/d;p?q is g:h
+Passed test:     ref_resolution.m:51 ... ./g resolved against http://a/b/c/d;p?q is http://a/b/c/g
+Passed test:     ref_resolution.m:58 ... //g resolved against http://a/b/c/d;p?q is http://g
+Passed test:     ref_resolution.m:65 ... #s resolved against http://a/b/c/d;p?q is http:/a/b/c/d;p?q#s
+Passed test:     ref_resolution.m:72 ... g;x?y#s resolved against http://a/b/c/d;p?q is http://a/b/c/g;x?y#s
+Passed test:     ref_resolution.m:79 ... ../.. resolved against http://a/b/c/d;p?q is http://a/
+Passed test:     ref_resolution.m:86 ... ../../g resolved against http://a/b/c/d;p?q is http://a/g
+Passed test:     ref_resolution.m:93 ... ../../../../g resolved against http://a/b/c/d;p?q is http://a/g
+Passed test:     ref_resolution.m:100 ... /./g resolved against http://a/b/c/d;p?q is http://a/g
+Passed test:     ref_resolution.m:107 ... /../g resolved against http://a/b/c/d;p?q is http://a/g
+Passed test:     ref_resolution.m:114 ... ..g resolved against http://a/b/c/d;p?q is http://a/b/c/..g
+Passed test:     ref_resolution.m:121 ... ./../g resolved against http://a/b/c/d;p?q is http://a/b/g
+Passed test:     ref_resolution.m:128 ... g;x=1/./y resolved against http://a/b/c/d;p?q is http://a/b/c/g;x=1/y
+Passed test:     ref_resolution.m:135 ... g?y/../x resolved against http://a/b/c/d;p?q is http://a/b/c/g?y/../x
+Completed file:  ref_resolution.m
+
+Passed test:     basic.m:24 ... Directory was successfully created.
+Passed test:     basic.m:31 ... Data was successfully written to test file.
+Passed test:     basic.m:40 ... Empty file was successfully created.
+Passed test:     basic.m:45 ... Could not delete directory.
+Passed test:     basic.m:48 ... File was successfully read.
+Passed test:     basic.m:51 ... Properties correctly read.
+Passed test:     basic.m:56 ... Directory was successfully read.
+Passed test:     basic.m:59 ... There are 2 items in the directory.
+Passed test:     basic.m:61 ... Directory has file1.txt
+Passed test:     basic.m:63 ... Directory has file2.txt
+Passed test:     basic.m:69 ... Content read is the same the content that was written.
+Passed test:     basic.m:73 ... File1 was successfully deleted.
+Passed test:     basic.m:74 ... File2 was successfully deleted.
+Passed test:     basic.m:75 ... Directory was successfully deleted.
+Completed file:  basic.m
+
+Passed test:     create.m:12 ... CFUUIDCreate() returns non-NULL.
+Passed test:     create.m:17 ... UUID creates with CFUUIDBytes is correct.
+Passed test:     create.m:21 ... CFUUIDCreateString() returns non-NULL.
+Completed file:  create.m
+
+    329 Passed tests
+      3 Dashed hopes
+      1 Failed test
+      1 Failed file
