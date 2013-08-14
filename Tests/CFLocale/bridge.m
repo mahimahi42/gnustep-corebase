@@ -33,7 +33,6 @@ void testCFonNS(void)
 
 void testNSonCF(void)
 {
-	/*
 	CFLocaleRef cfRef = CFLocaleCreate (NULL, CFDictionaryGetValue((CFDictionaryRef)[NSUserDefaults standardUserDefaults], @"Locale"));
 	NSLocale* locale = (NSLocale*)cfRef;
 
@@ -46,6 +45,5 @@ void testNSonCF(void)
 	PASS_CF(CFStringCompare(CFLocaleCopyDisplayNameForPropertyValue(cfRef, kCFLocaleIdentifier, CFSTR("fr_FR")),
 				(CFStringRef) [locale displayNameForKey: NSLocaleIdentifier value: @"fr_FR"], 0) == 0,
 			"CFLocaleCopyDisplayNameForPropertyValue works");
-	*/
 }
 
